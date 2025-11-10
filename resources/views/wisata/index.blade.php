@@ -1,16 +1,37 @@
-@extends('dashboard.index')
+@extends('layouts.main')
+
+@section('title', 'Daftar Wisata - Wisata Jember')
+
+@section('additional-styles')
+    .action-buttons .btn {
+        transition: all 0.3s ease;
+    }
+    .action-buttons .btn:hover {
+        transform: translateY(-2px);
+    }
+    .table {
+        color: var(--light);
+    }
+    .table th {
+        border-color: rgba(255, 255, 255, 0.2);
+    }
+    .table td {
+        border-color: rgba(255, 255, 255, 0.1);
+    }
+@endsection
 
 @section('content')
 <div class="container">
     <div class="row">
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2>Daftar Wisata</h2>
+                <h2 class="mb-0">Daftar Wisata</h2>
                 <a href="{{ route('wisata.create') }}" class="btn btn-primary">
-                    <i class="fas fa-plus"></i> Tambah Wisata
+                    <i class="fas fa-plus-circle me-1"></i> Tambah Wisata
                 </a>
             </div>
-            <div class="card">
+            
+            <div class="glass-card">
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-hover">
