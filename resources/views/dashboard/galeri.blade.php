@@ -23,7 +23,7 @@
 
     body {
       background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
-                  url('https://www.rayadventure.com/wp-content/uploads/2018/07/wisata-pantai-papuma-645x429.jpg') no-repeat center center fixed;
+                  url('https://asset-2.tstatic.net/travel/foto/bank/images/pantai-papuma-jember-jawa-timur.jpg') no-repeat center center fixed;
       background-size: cover;
       font-family: 'Poppins', 'Segoe UI', sans-serif;
       color: white;
@@ -305,7 +305,7 @@
           <li class="nav-item"><a class="nav-link" href="/dashboard/fasilitas">Fasilitas</a></li>
           <li class="nav-item"><a class="nav-link" href="/dashboard/galeri">Galeri</a></li>
           <li class="nav-item"><a class="nav-link" href="/dashboard/tentangKami">Tentang Kami</a></li>
-          <li class="nav-item"><a class="nav-link" href="#">Kontak</a></li>
+          <li class="nav-item"><a class="nav-link" href="/dashboard/kontak">Kontak</a></li>
         </ul>
       </div>
     </div>

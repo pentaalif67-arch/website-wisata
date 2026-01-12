@@ -244,8 +244,8 @@
           <li class="nav-item"><a class="nav-link" href="/dashboard/destinasi">Destinasi</a></li>
           <li class="nav-item"><a class="nav-link" href="/dashboard/fasilitas">Fasilitas</a></li>
           <li class="nav-item"><a class="nav-link" href="/dashboard/galeri">Galeri</a></li>
-          <li class="nav-item"><a class="nav-link" href="/dashboard/tentangkami">Tentang Kami</a></li>
-          <li class="nav-item"><a class="nav-link" href="#">Kontak</a></li>
+          <li class="nav-item"><a class="nav-link" href="/dashboard/tentangKami">Tentang Kami</a></li>
+          <li class="nav-item"><a class="nav-link" href="/dashboard/kontak">Kontak</a></li>
         </ul>
       </div>
     </div>

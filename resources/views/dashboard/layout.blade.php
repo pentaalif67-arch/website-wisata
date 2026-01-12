@@ -35,6 +35,7 @@
       background: rgba(0, 0, 0, 0.5);
       backdrop-filter: blur(10px);
       box-shadow: var(--card-shadow);
+      z-index: 2000;
     }
 
     .navbar-brand {
@@ -638,8 +639,8 @@
           <li class="nav-item"><a class="nav-link {{ request()->is('dashboard/destinasi*') ? 'active' : '' }}" href="/dashboard/destinasi">Destinasi</a></li>
           <li class="nav-item"><a class="nav-link" href="/dashboard/fasilitas">Fasilitas</a></li>
           <li class="nav-item"><a class="nav-link {{ request()->is('galeri') ? 'active' : '' }}" href="/dashboard/galeri">Galeri</a></li>
-          <li class="nav-item"><a class="nav-link {{ request()->is('tentangkami') ? 'active' : '' }}" href="/dashboard/tentangkami">Tentang Kami</a></li>
-          <li class="nav-item"><a class="nav-link" href="#">Kontak</a></li>
+          <li class="nav-item"><a class="nav-link {{ request()->is('tentangkami') ? 'active' : '' }}" href="/dashboard/tentangKami">Tentang Kami</a></li>
+          <li class="nav-item"><a class="nav-link {{ request()->is('kontak') ? 'active' : '' }}" href="/dashboard/kontak">Kontak</a></li>
         </ul>
         <div class="ms-3">
           @guest

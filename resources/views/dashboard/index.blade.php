@@ -332,7 +332,7 @@
           <li class="nav-item"><a class="nav-link" href="/dashboard/fasilitas">Fasilitas</a></li>
           <li class="nav-item"><a class="nav-link" href="/dashboard/galeri">Galeri</a></li>
           <li class="nav-item"><a class="nav-link" href="/dashboard/tentangKami">Tentang Kami</a></li>
-          <li class="nav-item"><a class="nav-link" href="#">Kontak</a></li>
+          <li class="nav-item"><a class="nav-link" href="/dashboard/kontak">Kontak</a></li>
           @auth
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">

@@ -45,6 +45,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 // Public Routes
+Route::get('/dashboard/kontak', function () {
+    return view('dashboard.kontak');
+})->name('kontak.index');
+
+Route::post('/dashboard/kontak', function () {
+    // Handle contact form submission
+    return back()->with('success', 'Pesan Anda telah dikirim. Terima kasih!');
+})->name('kontak.kirim');
+
 Route::get('/wisata', function () {
     return redirect()->route('destinasi.index');
 })->name('wisata.index');
