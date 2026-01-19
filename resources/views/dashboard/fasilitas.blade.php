@@ -284,6 +284,7 @@
 </head>
 
 <body>
+    @php use Illuminate\Support\Str; @endphp
   <!-- Navbar -->
   <nav class="navbar navbar-expand-lg fixed-top">
     <div class="container">
@@ -373,7 +374,11 @@
         @forelse($fasilitas as $item)
         <div class="col-md-4 mb-4 fade-in fasilitas-item" data-kategori="{{ $item['kategori'] }}" data-nama="{{ strtolower($item['nama']) }}">
           <div class="glass-card h-100">
-            <div class="fasilitas-img" style="background-image: url('{{ $item['gambar'] }}'); background-size: cover; background-position: center; height: 200px;"></div>
+            @php
+              $isUrl = Str::startsWith($item['gambar'], ['http://', 'https://']);
+              $imgSrc = $isUrl ? $item['gambar'] : asset('storage/fasilitas/' . $item['gambar']);
+            @endphp
+            <div class="fasilitas-img" style="background-image: url('{{ $imgSrc }}'); background-size: cover; background-position: center; height: 200px;"></div>
             <div class="card-body">
               <div class="d-flex justify-content-between align-items-start mb-2">
                 <h5 class="card-title">{{ $item['nama'] }}</h5>
@@ -1096,15 +1101,13 @@
   </style>
 
   <script>
-    // Fungsi untuk load data fasilitas dari database
+    // Data fasilitas dari controller
+    const dbFasilitas = window.dbFasilitas;
     function loadFasilitasDatabase() {
-      const dbFasilitas = @json(\App\Models\Fasilitas::all());
       const tbody = document.getElementById('tabelFasilitas');
       const noDataMsg = document.getElementById('noDataMessage');
-      
       if (dbFasilitas && dbFasilitas.length > 0) {
         tbody.innerHTML = '';
-        
         dbFasilitas.forEach((item, index) => {
           const row = document.createElement('tr');
           row.innerHTML = `
@@ -1125,7 +1128,6 @@
           `;
           tbody.appendChild(row);
         });
-        
         noDataMsg.style.display = 'none';
       } else {
         noDataMsg.style.display = 'block';
@@ -1135,7 +1137,6 @@
 
     // Fungsi untuk membuka modal edit
     function openEditModal(id) {
-      const dbFasilitas = @json(\App\Models\Fasilitas::all());
       const item = dbFasilitas.find(f => f.id == id);
       
       if (!item) {
@@ -1419,5 +1420,9 @@
     });
   </script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+<script>
+  //window.dbFasilitas = @json($fasilitas);
+</script>
 </body>
 </html>

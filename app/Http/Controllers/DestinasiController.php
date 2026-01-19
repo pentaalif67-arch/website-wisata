@@ -187,11 +187,13 @@ class DestinasiController extends Controller
             }
         }
 
-        // Update gambar jika ada file baru
+        // Update gambar: jika gambar_url diisi, gunakan url, jika upload file gunakan file
         $gambarPath = $destinasi->gambar;
-        if ($request->hasFile('gambar')) {
-            // Hapus gambar lama jika ada
-            if ($gambarPath && Storage::disk('public')->exists($gambarPath)) {
+        if ($request->filled('gambar_url')) {
+            $gambarPath = $request->gambar_url;
+        } elseif ($request->hasFile('gambar')) {
+            // Hapus gambar lama jika ada dan bukan url
+            if ($gambarPath && !filter_var($gambarPath, FILTER_VALIDATE_URL) && Storage::disk('public')->exists($gambarPath)) {
                 Storage::disk('public')->delete($gambarPath);
             }
             // Simpan gambar baru

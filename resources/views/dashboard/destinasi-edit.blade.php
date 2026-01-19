@@ -322,11 +322,13 @@
           </div>
 
           <div class="row">
-            <!-- Upload Gambar Baru -->
+            <!-- Gambar: Pilih upload atau URL -->
             <div class="col-md-6 mb-3">
-              <label for="gambar" class="form-label">Upload Gambar Baru (Opsional)</label>
+              <label for="gambar_url" class="form-label">URL Gambar (Opsional)</label>
+              <input type="url" class="form-control" id="gambar_url" name="gambar_url" placeholder="https://..." value="{{ old('gambar_url', filter_var($destinasi->gambar, FILTER_VALIDATE_URL) ? $destinasi->gambar : '') }}">
+              <small class="text-muted d-block mt-1">Isi dengan link gambar jika ingin menggunakan gambar dari internet.</small>
+              <label for="gambar" class="form-label mt-3">Upload Gambar Baru (Opsional)</label>
               <input type="file" class="form-control" id="gambar" name="gambar" accept="image/*">
-              <small class="text-muted d-block mt-1">Kosongkan jika tidak ingin mengubah gambar</small>
               <small class="text-muted">Tipe: JPG, PNG, GIF (Max: 2MB)</small>
             </div>
 
@@ -343,9 +345,11 @@
           <div class="mb-4">
             <span class="image-label">Gambar Saat Ini:</span>
             <div class="image-preview">
-              <img src="{{ asset('storage/' . $destinasi->gambar) }}" 
-                   alt="{{ $destinasi->nama }}" 
-                   class="current-image mb-2">
+              @if(filter_var($destinasi->gambar, FILTER_VALIDATE_URL))
+                <img src="{{ $destinasi->gambar }}" alt="{{ $destinasi->nama }}" class="current-image mb-2">
+              @else
+                <img src="{{ asset('storage/' . $destinasi->gambar) }}" alt="{{ $destinasi->nama }}" class="current-image mb-2">
+              @endif
               <div class="text-muted small">Gambar yang saat ini digunakan</div>
             </div>
           </div>
