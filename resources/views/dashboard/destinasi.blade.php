@@ -424,9 +424,14 @@
         <ul class="navbar-nav">
           <li class="nav-item"><a class="nav-link" href="/dashboard">Beranda</a></li>
           <li class="nav-item"><a class="nav-link active" href="/dashboard/destinasi">Destinasi</a></li>
-          <li class="nav-item"><a class="nav-link active" href="/dashboard/fasilitas">Fasilitas</a></li>
-          <li class="nav-item"><a class="nav-link active" href="/dashboard/galeri">Galeri</a></li>
-          <li class="nav-item"><a class="nav-link active" href="/dashboard/tentangKami">Tentang Kami</a></li>
+          @auth
+            @if(Auth::user()->isPelanggan())
+              <li class="nav-item"><a class="nav-link" href="/dashboard/pemesanan-tiket">Pesanan Saya</a></li>
+            @endif
+          @endauth
+          <li class="nav-item"><a class="nav-link" href="/dashboard/fasilitas">Fasilitas</a></li>
+          <li class="nav-item"><a class="nav-link" href="/dashboard/galeri">Galeri</a></li>
+          <li class="nav-item"><a class="nav-link" href="/dashboard/tentangKami">Tentang Kami</a></li>
           <li class="nav-item"><a class="nav-link" href="/dashboard/kontak">Kontak</a></li>
           @auth
           <li class="nav-item dropdown">
@@ -511,9 +516,17 @@
       <!-- Header with Add Button -->
       <div class="d-flex justify-content-between align-items-center mb-4">
         <h3 class="section-title fade-in">Daftar Destinasi</h3>
-        <a href="{{ route('destinasi.create') }}" class="btn btn-accent fade-in">
-          <i class="fas fa-plus-circle me-2"></i>Tambah Destinasi
-        </a>
+        @auth
+          @if(Auth::user()->isAdmin())
+            <a href="{{ route('destinasi.create') }}" class="btn btn-accent fade-in">
+              <i class="fas fa-plus-circle me-2"></i>Tambah Destinasi
+            </a>
+          @else
+            <a href="{{ route('pemesanan-tiket.index') }}" class="btn btn-accent fade-in">
+              <i class="fas fa-ticket-alt me-2"></i>Pesanan Saya
+            </a>
+          @endif
+        @endauth
       </div>
 
       <!-- Daftar Destinasi -->
@@ -554,9 +567,17 @@
     <button class="btn btn-outline-accent btn-sm" data-bs-toggle="modal" data-bs-target="#detailModal-{{ $destinasi->id }}">
       <i class="fas fa-eye me-1"></i>Detail
     </button>
-    <a href="{{ route('destinasi.edit', $destinasi->id) }}" class="btn btn-outline-primary btn-sm ms-2">
-      <i class="fas fa-edit me-1"></i>Edit
-    </a>
+    @auth
+      @if(Auth::user()->isAdmin())
+        <a href="{{ route('destinasi.edit', $destinasi->id) }}" class="btn btn-outline-primary btn-sm ms-2">
+          <i class="fas fa-edit me-1"></i>Edit
+        </a>
+      @else
+        <a href="{{ route('pemesanan-tiket.create', $destinasi->id) }}" class="btn btn-outline-success btn-sm ms-2">
+          <i class="fas fa-ticket-alt me-1"></i>Pesan Tiket
+        </a>
+      @endif
+    @endauth
   </div>
                   
                   <div class="d-flex align-items-center gap-2">
@@ -565,19 +586,23 @@
                       <span class="ms-1">({{ $destinasi->rating ?? '4.5' }})</span>
                     </div>
                     
-                    <!-- Tombol Hapus -->
-                    <form action="{{ route('destinasi.destroy', $destinasi->id) }}" method="POST" class="d-inline delete-form">
-                      @csrf
-                      @method('DELETE')
-                      <button type="submit" 
-                              class="btn btn-outline-danger btn-sm delete-btn" 
-                              onclick="return confirmDelete('{{ addslashes($destinasi->nama) }}')"
-                              data-bs-toggle="tooltip" 
-                              data-bs-title="Hapus destinasi"
-                              data-bs-placement="top">
-                        <i class="fas fa-trash"></i>
-                      </button>
-                    </form>
+                    @auth
+                      @if(Auth::user()->isAdmin())
+                        <!-- Tombol Hapus - Hanya untuk Admin -->
+                        <form action="{{ route('destinasi.destroy', $destinasi->id) }}" method="POST" class="d-inline delete-form">
+                          @csrf
+                          @method('DELETE')
+                          <button type="submit" 
+                                  class="btn btn-outline-danger btn-sm delete-btn" 
+                                  onclick="return confirmDelete('{{ addslashes($destinasi->nama) }}')"
+                                  data-bs-toggle="tooltip" 
+                                  data-bs-title="Hapus destinasi"
+                                  data-bs-placement="top">
+                            <i class="fas fa-trash"></i>
+                          </button>
+                        </form>
+                      @endif
+                    @endauth
                   </div>
                 </div>
               </div>
@@ -671,7 +696,13 @@
                 </div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-outline-accent" data-bs-dismiss="modal">Tutup</button>
-                  <button type="button" class="btn btn-accent pesan-tiket-btn" data-destinasi="{{ $destinasi->nama }}">Pesan Tiket</button>
+                  @auth
+                    @if(Auth::user()->isPelanggan())
+                      <a href="{{ route('pemesanan-tiket.create', $destinasi->id) }}" class="btn btn-accent">
+                        <i class="fas fa-ticket-alt me-1"></i>Pesan Tiket
+                      </a>
+                    @endif
+                  @endauth
                 </div>
               </div>
             </div>
@@ -682,9 +713,13 @@
               <i class="fas fa-map-marked-alt fa-3x mb-3" style="color: var(--accent); opacity: 0.7;"></i>
               <h5 class="mb-2">Belum ada destinasi yang ditambahkan</h5>
               <p class="mb-3 opacity-75">Mulai dengan menambahkan destinasi wisata pertama Anda</p>
-              <a href="{{ route('destinasi.create') }}" class="btn btn-accent">
-                <i class="fas fa-plus-circle me-2"></i>Tambah Destinasi Pertama
-              </a>
+              @auth
+                @if(Auth::user()->isAdmin())
+                  <a href="{{ route('destinasi.create') }}" class="btn btn-accent">
+                    <i class="fas fa-plus-circle me-2"></i>Tambah Destinasi Pertama
+                  </a>
+                @endif
+              @endauth
             </div>
           </div>
         @endforelse

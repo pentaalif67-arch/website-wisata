@@ -23,7 +23,7 @@
 
     body {
       background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
-                  url('https://images.unsplash.com/photo-1544551763-46a013bb70d5?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80') no-repeat center center fixed;
+                  url('https://asset-2.tstatic.net/travel/foto/bank/images/pantai-papuma-jember-jawa-timur.jpg') no-repeat center center fixed;
       background-size: cover;
       font-family: 'Poppins', 'Segoe UI', sans-serif;
       color: white;
@@ -235,6 +235,7 @@
 
     .contact-item:hover {
       background: rgba(255, 255, 255, 0.05);
+      padding-left: 2rem;
     }
 
     .contact-item:last-child {
@@ -242,16 +243,30 @@
     }
 
     .contact-icon {
-      width: 50px;
-      height: 50px;
+      width: 60px;
+      height: 60px;
       border-radius: 50%;
-      background: rgba(233, 196, 106, 0.2);
+      background: linear-gradient(135deg, rgba(42, 157, 143, 0.3), rgba(233, 196, 106, 0.2));
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-right: 1rem;
+      margin-right: 1.5rem;
       color: var(--accent);
-      font-size: 1.2rem;
+      font-size: 1.5rem;
+      transition: all 0.3s ease;
+      border: 2px solid rgba(233, 196, 106, 0.3);
+    }
+
+    .contact-item:hover .contact-icon {
+      background: linear-gradient(135deg, rgba(42, 157, 143, 0.5), rgba(233, 196, 106, 0.4));
+      border-color: var(--accent);
+      transform: scale(1.1);
+    }
+
+    .contact-item h5 {
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
     }
 
     /* Map Container */
@@ -407,6 +422,63 @@
       font-size: 0.75rem;
       font-weight: 500;
     }
+
+    /* Destinasi Contact Items */
+    .destinasi-contact-item {
+      padding: 1.5rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .destinasi-contact-item:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-left: 4px solid var(--accent);
+      padding-left: 1.8rem;
+    }
+
+    .destinasi-contact-item:last-child {
+      border-bottom: none;
+    }
+
+    .destinasi-info h5 {
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 0.3rem;
+    }
+
+    .destinasi-info p {
+      font-size: 0.9rem;
+      opacity: 0.8;
+      margin: 0;
+    }
+
+    .destinasi-actions {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .destinasi-actions a {
+      color: var(--accent);
+      text-decoration: none;
+      transition: all 0.3s ease;
+      font-size: 0.9rem;
+      white-space: nowrap;
+    }
+
+    .destinasi-actions a:hover {
+      color: #f4b847;
+      transform: translateX(3px);
+    }
+
+    .destinasi-actions a i {
+      margin-right: 0.3rem;
+    }
   </style>
 </head>
 
@@ -439,10 +511,9 @@
         <p class="subtitle">Kami siap membantu dan menjawab pertanyaan Anda tentang destinasi wisata Jember</p>
       </div>
 
-      <!-- Contact Info & Form -->
+      <!-- Contact Information Only -->
       <div class="row fade-in mb-5">
-        <!-- Contact Information -->
-        <div class="col-lg-4 mb-4">
+        <div class="col-lg-8 mx-auto">
           <div class="glass-card p-4 h-100">
             <h3 class="section-title mb-4">Informasi Kontak</h3>
             
@@ -510,176 +581,70 @@
             </div>
           </div>
         </div>
-
-        <!-- Contact Form -->
-        <div class="col-lg-8 mb-4">
-          <div class="glass-card p-4">
-            <h3 class="section-title mb-4">Kirim Pesan</h3>
-            
-            @if(session('success'))
-            <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
-              <i class="fas fa-check-circle me-2"></i>
-              {{ session('success') }}
-              <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-            @endif
-            
-            @if($errors->any())
-            <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
-              <i class="fas fa-exclamation-circle me-2"></i>
-              Terdapat kesalahan dalam pengisian form:
-              <ul class="mb-0 mt-2">
-                @foreach($errors->all() as $error)
-                  <li>{{ $error }}</li>
-                @endforeach
-              </ul>
-              <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-            @endif
-
-            <form action="{{ route('kontak.kirim') }}" method="POST">
-              @csrf
-              
-              <div class="row">
-                <div class="col-md-6 mb-3">
-                  <label for="nama" class="form-label">Nama Lengkap *</label>
-                  <input type="text" class="form-control" id="nama" name="nama" 
-                         value="{{ old('nama') }}" required>
-                </div>
-                
-                <div class="col-md-6 mb-3">
-                  <label for="email" class="form-label">Email *</label>
-                  <input type="email" class="form-control" id="email" name="email" 
-                         value="{{ old('email') }}" required>
-                </div>
-              </div>
-
-              <div class="mb-3">
-                <label for="telepon" class="form-label">Nomor Telepon</label>
-                <input type="tel" class="form-control" id="telepon" name="telepon" 
-                       value="{{ old('telepon') }}" placeholder="+62...">
-              </div>
-
-              <div class="mb-3">
-                <label for="subjek" class="form-label">Subjek *</label>
-                <select class="form-select" id="subjek" name="subjek" required>
-                  <option value="">-- Pilih Subjek --</option>
-                  <option value="informasi" {{ old('subjek') == 'informasi' ? 'selected' : '' }}>Informasi Destinasi</option>
-                  <option value="pemesanan" {{ old('subjek') == 'pemesanan' ? 'selected' : '' }}>Pemesanan Tiket</option>
-                  <option value="kerjasama" {{ old('subjek') == 'kerjasama' ? 'selected' : '' }}>Kerjasama</option>
-                  <option value="keluhan" {{ old('subjek') == 'keluhan' ? 'selected' : '' }}>Keluhan</option>
-                  <option value="lainnya" {{ old('subjek') == 'lainnya' ? 'selected' : '' }}>Lainnya</option>
-                </select>
-              </div>
-
-              <div class="mb-3">
-                <label for="pesan" class="form-label">Pesan *</label>
-                <textarea class="form-control" id="pesan" name="pesan" rows="5" required>{{ old('pesan') }}</textarea>
-                <div class="form-text text-white-50" id="charCount">Sisa karakter: 1000</div>
-              </div>
-
-              <div class="d-flex justify-content-between align-items-center">
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="newsletter" name="newsletter">
-                  <label class="form-check-label text-white-50" for="newsletter">
-                    Berlangganan newsletter
-                  </label>
-                </div>
-                <button type="submit" class="btn btn-accent px-4">
-                  <i class="fas fa-paper-plane me-2"></i>Kirim Pesan
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
       </div>
 
       <!-- Destinasi Contacts -->
       <div class="row fade-in mb-5">
         <div class="col-12">
-          <div class="info-header mb-4">
-            <i class="fas fa-address-book info-icon"></i>
-            <h3 class="section-title mb-0">Kontak Destinasi Wisata</h3>
+          <div class="mb-4">
+            <i class="fas fa-address-book info-icon" style="font-size: 1.5rem; color: var(--accent);"></i>
+            <h3 class="section-title ms-3 d-inline">Kontak Destinasi Wisata</h3>
           </div>
           
           <div class="glass-card p-0 overflow-hidden">
             <!-- Pantai Papuma -->
-            <div class="contact-item d-flex align-items-center">
-              <div class="flex-shrink-0 ms-4">
-                <span class="badge-category">Pantai</span>
+            <div class="destinasi-contact-item">
+              <div>
+                <span class="badge-category">🌊 Pantai</span>
+                <h5 class="mt-2">Pantai Papuma</h5>
+                <p>Desa Lojejer, Kecamatan Wuluhan</p>
               </div>
-              <div class="flex-grow-1 ms-4">
-                <h5 class="mb-1">Pantai Papuma</h5>
-                <p class="text-white-50 mb-0">Desa Lojejer, Kecamatan Wuluhan</p>
-              </div>
-              <div class="flex-shrink-0 text-end me-4">
-                <div class="mb-1">
-                  <a href="tel:+62331111222" class="text-link me-3"><i class="fas fa-phone me-1"></i> (0331) 111222</a>
-                  <a href="https://wa.me/62811223344" target="_blank" class="text-link"><i class="fab fa-whatsapp me-1"></i> +62 811-2233-44</a>
-                </div>
-                <a href="https://goo.gl/maps/xyz" target="_blank" class="text-link">
-                  <i class="fas fa-map-marker-alt me-1"></i> Lihat di Maps
-                </a>
+              <div class="destinasi-actions">
+                <a href="tel:+62331111222" title="Telepon"><i class="fas fa-phone"></i>(0331) 111222</a>
+                <a href="https://wa.me/62811223344" target="_blank" title="WhatsApp"><i class="fab fa-whatsapp"></i>+62 811-2233-44</a>
+                <a href="https://goo.gl/maps/xyz" target="_blank" title="Google Maps"><i class="fas fa-map"></i>Lihat Maps</a>
               </div>
             </div>
 
             <!-- Taman Botani Sukorambi -->
-            <div class="contact-item d-flex align-items-center">
-              <div class="flex-shrink-0 ms-4">
-                <span class="badge-category">Alam</span>
+            <div class="destinasi-contact-item">
+              <div>
+                <span class="badge-category">🌿 Alam</span>
+                <h5 class="mt-2">Taman Botani Sukorambi</h5>
+                <p>Desa Sukorambi, Kecamatan Sukorambi</p>
               </div>
-              <div class="flex-grow-1 ms-4">
-                <h5 class="mb-1">Taman Botani Sukorambi</h5>
-                <p class="text-white-50 mb-0">Desa Sukorambi, Kecamatan Sukorambi</p>
-              </div>
-              <div class="flex-shrink-0 text-end me-4">
-                <div class="mb-1">
-                  <a href="tel:+62331122333" class="text-link me-3"><i class="fas fa-phone me-1"></i> (0331) 112333</a>
-                  <a href="https://wa.me/62822334455" target="_blank" class="text-link"><i class="fab fa-whatsapp me-1"></i> +62 822-3344-55</a>
-                </div>
-                <a href="https://goo.gl/maps/abc" target="_blank" class="text-link">
-                  <i class="fas fa-map-marker-alt me-1"></i> Lihat di Maps
-                </a>
+              <div class="destinasi-actions">
+                <a href="tel:+62331122333" title="Telepon"><i class="fas fa-phone"></i>(0331) 112333</a>
+                <a href="https://wa.me/62822334455" target="_blank" title="WhatsApp"><i class="fab fa-whatsapp"></i>+62 822-3344-55</a>
+                <a href="https://goo.gl/maps/abc" target="_blank" title="Google Maps"><i class="fas fa-map"></i>Lihat Maps</a>
               </div>
             </div>
 
             <!-- Museum Jember -->
-            <div class="contact-item d-flex align-items-center">
-              <div class="flex-shrink-0 ms-4">
-                <span class="badge-category">Budaya</span>
+            <div class="destinasi-contact-item">
+              <div>
+                <span class="badge-category">🏛️ Budaya</span>
+                <h5 class="mt-2">Museum Jember</h5>
+                <p>Jl. Jawa No.1, Kaliwates</p>
               </div>
-              <div class="flex-grow-1 ms-4">
-                <h5 class="mb-1">Museum Jember</h5>
-                <p class="text-white-50 mb-0">Jl. Jawa No.1, Kaliwates</p>
-              </div>
-              <div class="flex-shrink-0 text-end me-4">
-                <div class="mb-1">
-                  <a href="tel:+62331133444" class="text-link me-3"><i class="fas fa-phone me-1"></i> (0331) 113444</a>
-                  <a href="https://wa.me/62833445566" target="_blank" class="text-link"><i class="fab fa-whatsapp me-1"></i> +62 833-4455-66</a>
-                </div>
-                <a href="https://goo.gl/maps/def" target="_blank" class="text-link">
-                  <i class="fas fa-map-marker-alt me-1"></i> Lihat di Maps
-                </a>
+              <div class="destinasi-actions">
+                <a href="tel:+62331133444" title="Telepon"><i class="fas fa-phone"></i>(0331) 113444</a>
+                <a href="https://wa.me/62833445566" target="_blank" title="WhatsApp"><i class="fab fa-whatsapp"></i>+62 833-4455-66</a>
+                <a href="https://goo.gl/maps/def" target="_blank" title="Google Maps"><i class="fas fa-map"></i>Lihat Maps</a>
               </div>
             </div>
 
             <!-- Watu Ulo -->
-            <div class="contact-item d-flex align-items-center">
-              <div class="flex-shrink-0 ms-4">
-                <span class="badge-category">Pantai</span>
+            <div class="destinasi-contact-item">
+              <div>
+                <span class="badge-category">🌊 Pantai</span>
+                <h5 class="mt-2">Pantai Watu Ulo</h5>
+                <p>Desa Sumberejo, Kecamatan Ambulu</p>
               </div>
-              <div class="flex-grow-1 ms-4">
-                <h5 class="mb-1">Pantai Watu Ulo</h5>
-                <p class="text-white-50 mb-0">Desa Sumberejo, Kecamatan Ambulu</p>
-              </div>
-              <div class="flex-shrink-0 text-end me-4">
-                <div class="mb-1">
-                  <a href="tel:+62331144555" class="text-link me-3"><i class="fas fa-phone me-1"></i> (0331) 114555</a>
-                  <a href="https://wa.me/62844556677" target="_blank" class="text-link"><i class="fab fa-whatsapp me-1"></i> +62 844-5566-77</a>
-                </div>
-                <a href="https://goo.gl/maps/ghi" target="_blank" class="text-link">
-                  <i class="fas fa-map-marker-alt me-1"></i> Lihat di Maps
-                </a>
+              <div class="destinasi-actions">
+                <a href="tel:+62331144555" title="Telepon"><i class="fas fa-phone"></i>(0331) 114555</a>
+                <a href="https://wa.me/62844556677" target="_blank" title="WhatsApp"><i class="fab fa-whatsapp"></i>+62 844-5566-77</a>
+                <a href="https://goo.gl/maps/ghi" target="_blank" title="Google Maps"><i class="fas fa-map"></i>Lihat Maps</a>
               </div>
             </div>
           </div>
@@ -810,45 +775,6 @@
           link.classList.remove('active');
         }
       });
-
-      // Karakter counter untuk pesan
-      const pesanInput = document.getElementById('pesan');
-      const charCount = document.getElementById('charCount');
-      
-      if (pesanInput && charCount) {
-        function updateCharCount() {
-          const remaining = 1000 - pesanInput.value.length;
-          charCount.textContent = `Sisa karakter: ${remaining}`;
-          charCount.style.color = remaining < 100 ? '#ff6b6b' : 'rgba(255, 255, 255, 0.5)';
-        }
-        
-        pesanInput.addEventListener('input', updateCharCount);
-        updateCharCount(); // Inisialisasi awal
-      }
-
-      // Auto-subject dari URL parameter
-      const urlParams = new URLSearchParams(window.location.search);
-      const subject = urlParams.get('subjek');
-      if (subject) {
-        const subjekSelect = document.getElementById('subjek');
-        if (subjekSelect) {
-          subjekSelect.value = subject;
-        }
-      }
-
-      // Form validation enhancement
-      const form = document.querySelector('form');
-      if (form) {
-        form.addEventListener('submit', function(e) {
-          const nama = document.getElementById('nama').value.trim();
-          const email = document.getElementById('email').value.trim();
-          
-          if (!nama || !email) {
-            e.preventDefault();
-            alert('Mohon lengkapi semua field yang wajib diisi.');
-          }
-        });
-      }
 
       // Animate cards on scroll
       const observerOptions = {

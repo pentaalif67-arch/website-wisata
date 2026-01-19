@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="csrf-token" content="{{ csrf_token() }}">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
   <title>Fasilitas Wisata Jember</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -316,28 +317,28 @@
         <div class="col-md-3 mb-4 fade-in">
           <div class="glass-card stat-card">
             <div class="card-icon"><i class="fas fa-hotel"></i></div>
-            <div class="stat-number">28</div>
+            <div class="stat-number">{{ $statistik['totalPenginapan'] ?? 0 }}</div>
             <div class="stat-label">Penginapan</div>
           </div>
         </div>
         <div class="col-md-3 mb-4 fade-in">
           <div class="glass-card stat-card">
             <div class="card-icon"><i class="fas fa-utensils"></i></div>
-            <div class="stat-number">45</div>
+            <div class="stat-number">{{ $statistik['totalRestoran'] ?? 0 }}</div>
             <div class="stat-label">Restoran</div>
           </div>
         </div>
         <div class="col-md-3 mb-4 fade-in">
           <div class="glass-card stat-card">
             <div class="card-icon"><i class="fas fa-car"></i></div>
-            <div class="stat-number">15</div>
+            <div class="stat-number">{{ $statistik['totalTransportasi'] ?? 0 }}</div>
             <div class="stat-label">Transportasi</div>
           </div>
         </div>
         <div class="col-md-3 mb-4 fade-in">
           <div class="glass-card stat-card">
             <div class="card-icon"><i class="fas fa-shopping-cart"></i></div>
-            <div class="stat-number">32</div>
+            <div class="stat-number">{{ $statistik['totalOlehOleh'] ?? 0 }}</div>
             <div class="stat-label">Oleh-oleh</div>
           </div>
         </div>
@@ -408,25 +409,22 @@
         @endforelse
       </div>
 
-      <!-- Quick Actions -->
-      <div class="quick-actions fade-in mt-5">
-        <a href="#" class="action-btn" data-bs-toggle="modal" data-bs-target="#tambahFasilitasModal">
-          <div class="action-icon"><i class="fas fa-plus-circle"></i></div>
-          Tambah Fasilitas
-        </a>
-        <a href="#" class="action-btn" data-bs-toggle="modal" data-bs-target="#kelolaFasilitasModal">
-          <div class="action-icon"><i class="fas fa-edit"></i></div>
-          Kelola Fasilitas
-        </a>
-        <a href="#" class="action-btn">
-          <div class="action-icon"><i class="fas fa-chart-bar"></i></div>
-          Laporan Fasilitas
-        </a>
-        <a href="#" class="action-btn">
-          <div class="action-icon"><i class="fas fa-cogs"></i></div>
-          Pengaturan
-        </a>
-      </div>
+      <!-- Quick Actions - Hanya untuk Admin -->
+      @auth
+        @if(Auth::user()->isAdmin())
+          <div class="quick-actions fade-in mt-5">
+            <a href="#" class="action-btn" data-bs-toggle="modal" data-bs-target="#tambahFasilitasModal">
+              <div class="action-icon"><i class="fas fa-plus-circle"></i></div>
+              Tambah Fasilitas
+            </a>
+            <a href="#" class="action-btn" data-bs-toggle="modal" data-bs-target="#kelolaFasilitasModal">
+              <div class="action-icon"><i class="fas fa-edit"></i></div>
+              Kelola Fasilitas
+            </a>
+           
+          </div>
+        @endif
+      @endauth
     </div>
   </div>
 
@@ -1178,7 +1176,8 @@
         method: 'POST',
         body: formData,
         headers: {
-          'X-Requested-With': 'XMLHttpRequest'
+          'X-Requested-With': 'XMLHttpRequest',
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
         }
       })
       .then(response => response.json())
@@ -1207,7 +1206,7 @@
           method: 'DELETE',
           headers: {
             'X-Requested-With': 'XMLHttpRequest',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
           }
         })
         .then(response => response.json())
@@ -1337,7 +1336,7 @@
         });
       });
 
-      // Function untuk submit form fasilitas
+    // Function untuk submit form fasilitas
       window.submitFasilitasForm = function() {
         const form = document.getElementById('fasilitasForm');
         
@@ -1374,7 +1373,8 @@
         const formData = new FormData(form);
         
         // Tambahkan CSRF token
-        formData.append('_token', document.querySelector('meta[name="csrf-token"]')?.content || '');
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content || '';
+        formData.append('_token', csrfToken);
         
         // Ubah checkbox menjadi array
         formData.delete('fasilitas');
@@ -1388,6 +1388,7 @@
           body: formData,
           headers: {
             'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRF-TOKEN': csrfToken,
           }
         })
         .then(response => response.json())

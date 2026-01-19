@@ -23,7 +23,7 @@
 
     body {
       background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
-                  url('https://www.rayadventure.com/wp-content/uploads/2018/07/wisata-pantai-papuma-645x429.jpg') no-repeat center center fixed;
+                  url('https://asset-2.tstatic.net/travel/foto/bank/images/pantai-papuma-jember-jawa-timur.jpg') no-repeat center center fixed;
       background-size: cover;
       font-family: 'Poppins', 'Segoe UI', sans-serif;
       color: white;
@@ -301,12 +301,26 @@
               <input type="number" class="form-control" id="harga_tiket" name="harga_tiket" min="0" required>
             </div>
 
+            <!-- Rating -->
+            <div class="col-md-6 mb-3">
+              <label for="rating" class="form-label">Rating (Bintang)</label>
+              <select class="form-select" id="rating" name="rating">
+                <option value="">-- Pilih Rating --</option>
+                <option value="3">⭐ 3 Bintang</option>
+                <option value="3.5">⭐ 3.5 Bintang</option>
+                <option value="4">⭐ 4 Bintang</option>
+                <option value="4.5">⭐ 4.5 Bintang</option>
+                <option value="5">⭐ 5 Bintang</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row">
             <!-- Kontak -->
             <div class="col-md-6 mb-3">
               <label for="kontak" class="form-label">Kontak (opsional)</label>
               <input type="text" class="form-control" id="kontak" name="kontak" placeholder="+62...">
             </div>
-          </div>
 
           <!-- Jam Buka dan Tutup -->
           <div class="row mb-3">

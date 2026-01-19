@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Fasilitas;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class FasilitasController extends Controller
 {
@@ -12,16 +13,19 @@ class FasilitasController extends Controller
      */
     public function index()
     {
-        // Data statistik fasilitas
-        $statistik = [
-            'totalPenginapan' => Fasilitas::where('kategori', 'LIKE', '%Penginapan%')->orWhere('kategori', 'LIKE', '%Hotel%')->orWhere('kategori', 'LIKE', '%RBNB%')->count() ?: 28,
-            'totalRestoran' => 45,
-            'totalTransportasi' => 15,
-            'totalOlehOleh' => 32
-        ];
-
-        // Ambil data fasilitas dari database, jika kosong gunakan data default
+        // Ambil data fasilitas dari database
         $dbFasilitas = Fasilitas::all();
+        
+        // Data statistik fasilitas dari database
+        $statistik = [
+            'totalPenginapan' => Fasilitas::where('kategori', 'LIKE', '%Penginapan%')
+                                    ->orWhere('kategori', 'LIKE', '%Hotel%')
+                                    ->orWhere('kategori', 'LIKE', '%RBNB%')
+                                    ->count() ?: 0,
+            'totalRestoran' => Fasilitas::where('kategori', 'Restoran')->count() ?: 0,
+            'totalTransportasi' => Fasilitas::where('kategori', 'Transportasi')->count() ?: 0,
+            'totalOlehOleh' => Fasilitas::where('kategori', 'Oleh-oleh')->count() ?: 0
+        ];
         
         if ($dbFasilitas->isEmpty()) {
             // Data fasilitas default jika database kosong
@@ -128,10 +132,16 @@ class FasilitasController extends Controller
             'kapasitas' => 'required|numeric',
             'jarak_km' => 'required|numeric',
             'rating' => 'nullable|string',
-            'fasilitas' => 'nullable|string',
+            'fasilitas' => 'nullable|array',
+            'fasilitas.*' => 'string',
             'website' => 'nullable|url',
             'foto' => 'nullable|image|max:5120'
         ]);
+
+        // Gabungkan fasilitas array jadi string
+        if (isset($validated['fasilitas']) && is_array($validated['fasilitas'])) {
+            $validated['fasilitas'] = implode(', ', $validated['fasilitas']);
+        }
 
         // Upload foto jika ada
         if ($request->hasFile('foto')) {
@@ -174,16 +184,22 @@ class FasilitasController extends Controller
             'kapasitas' => 'required|numeric',
             'jarak_km' => 'required|numeric',
             'rating' => 'nullable|string',
-            'fasilitas' => 'nullable|string',
+            'fasilitas' => 'nullable|array',
+            'fasilitas.*' => 'string',
             'website' => 'nullable|url',
             'foto' => 'nullable|image|max:5120'
         ]);
 
+        // Gabungkan fasilitas array jadi string
+        if (isset($validated['fasilitas']) && is_array($validated['fasilitas'])) {
+            $validated['fasilitas'] = implode(', ', $validated['fasilitas']);
+        }
+
         // Upload foto jika ada
         if ($request->hasFile('foto')) {
             // Hapus foto lama jika ada
-            if ($fasilitas->foto && \Storage::disk('public')->exists($fasilitas->foto)) {
-                \Storage::disk('public')->delete($fasilitas->foto);
+            if ($fasilitas->foto && Storage::disk('public')->exists($fasilitas->foto)) {
+                Storage::disk('public')->delete($fasilitas->foto);
             }
             $path = $request->file('foto')->store('fasilitas', 'public');
             $validated['foto'] = $path;
@@ -206,8 +222,8 @@ class FasilitasController extends Controller
         $fasilitas = Fasilitas::findOrFail($id);
 
         // Hapus foto jika ada
-        if ($fasilitas->foto && \Storage::disk('public')->exists($fasilitas->foto)) {
-            \Storage::disk('public')->delete($fasilitas->foto);
+        if ($fasilitas->foto && Storage::disk('public')->exists($fasilitas->foto)) {
+            Storage::disk('public')->delete($fasilitas->foto);
         }
 
         $fasilitas->delete();

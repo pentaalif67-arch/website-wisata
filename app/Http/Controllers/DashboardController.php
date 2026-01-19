@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;
 
 class DashboardController extends Controller
@@ -12,14 +13,29 @@ class DashboardController extends Controller
      */
     public function index()
     {
-        // Data statistik (dummy data - nanti bisa diganti dengan data dari database)
+        // Statistik utama diambil dari database
+        $jumlahDestinasi = DB::table('destinasis')->count();
+        $jumlahFasilitas = DB::table('fasilitas')->count();
+
+        // Galeri saat ini menggabungkan 6 data default + destinasi yang ada
+        $defaultGaleriCount = 6;
+        $jumlahGaleri = $defaultGaleriCount + $jumlahDestinasi;
+
+        // Total tiket terjual berdasarkan pemesanan yang sudah dikonfirmasi
+        $totalTiketTerjual = DB::table('pemesanan_tikets')
+            ->where('status', 'confirmed')
+            ->sum('jumlah_tiket');
+
+        // Jika belum ada yang dikonfirmasi, tampilkan total semua pemesanan
+        if ($totalTiketTerjual === 0) {
+            $totalTiketTerjual = DB::table('pemesanan_tikets')->sum('jumlah_tiket');
+        }
+
         $statistik = [
-            'jumlahDestinasi' => 24,
-            'jumlahPengunjung' => 1248,
-            'totalTiketTerjual' => 893,
-            'trendDestinasi' => 'up',
-            'trendPengunjung' => 'up', 
-            'trendTiket' => 'down'
+            'jumlahDestinasi' => $jumlahDestinasi,
+            'jumlahFasilitas' => $jumlahFasilitas,
+            'jumlahGaleri' => $jumlahGaleri,
+            'totalTiketTerjual' => $totalTiketTerjual,
         ];
 
         // Destinasi populer Jember

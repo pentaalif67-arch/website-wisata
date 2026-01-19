@@ -6,15 +6,14 @@ use App\Http\Controllers\DestinasiController;
 use App\Http\Controllers\FasilitasController;
 use App\Http\Controllers\TentangKamiController;
 use App\Http\Controllers\KontakController;
+use App\Http\Controllers\PemesananTiketController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return redirect()->route('dashboard');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard.index');
-})->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
 // Dashboard Routes (Protected)
 Route::middleware(['auth', 'verified'])->group(function () {
@@ -117,6 +116,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Tentang Kami Routes
     Route::get('/dashboard/tentangKami', [TentangKamiController::class, 'index'])->name('tentangKami.index');
+
+    // Pemesanan Tiket Routes - Hanya untuk Pelanggan
+    Route::get('/dashboard/pemesanan-tiket', [PemesananTiketController::class, 'index'])->name('pemesanan-tiket.index');
+    Route::get('/dashboard/pemesanan-tiket/create/{destinasi_id}', [PemesananTiketController::class, 'create'])->name('pemesanan-tiket.create');
+    Route::post('/dashboard/pemesanan-tiket/store', [PemesananTiketController::class, 'store'])->name('pemesanan-tiket.store');
+    Route::get('/dashboard/pemesanan-tiket/{id}', [PemesananTiketController::class, 'show'])->name('pemesanan-tiket.show');
+    Route::post('/dashboard/pemesanan-tiket/{id}/cancel', [PemesananTiketController::class, 'cancel'])->name('pemesanan-tiket.cancel');
 
     // Profile Routes
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

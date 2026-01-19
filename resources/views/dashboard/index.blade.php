@@ -329,6 +329,11 @@
         <ul class="navbar-nav">
           <li class="nav-item"><a class="nav-link active" href="/dashboard">Beranda</a></li>
           <li class="nav-item"><a class="nav-link" href="/dashboard/destinasi">Destinasi</a></li>
+          @auth
+            @if(Auth::user()->isPelanggan())
+              <li class="nav-item"><a class="nav-link" href="/dashboard/pemesanan-tiket">Pesanan Saya</a></li>
+            @endif
+          @endauth
           <li class="nav-item"><a class="nav-link" href="/dashboard/fasilitas">Fasilitas</a></li>
           <li class="nav-item"><a class="nav-link" href="/dashboard/galeri">Galeri</a></li>
           <li class="nav-item"><a class="nav-link" href="/dashboard/tentangKami">Tentang Kami</a></li>
@@ -374,45 +379,29 @@
         <div class="col-md-3 mb-4 fade-in">
           <div class="glass-card stat-card">
             <div class="card-icon"><i class="fas fa-map-marked-alt"></i></div>
-            <div class="stat-number">24</div>
+            <div class="stat-number">{{ number_format($statistik['jumlahDestinasi'] ?? 0) }}</div>
             <div class="stat-label">Total Destinasi</div>
-            <small class="text-success">
-              <i class="fas fa-arrow-up me-1"></i>
-              Naik
-            </small>
-          </div>
-        </div>
-        <div class="col-md-3 mb-4 fade-in">
-          <div class="glass-card stat-card">
-            <div class="card-icon"><i class="fas fa-users"></i></div>
-            <div class="stat-number">1.248</div>
-            <div class="stat-label">Pengunjung Terdaftar</div>
-            <small class="text-success">
-              <i class="fas fa-arrow-up me-1"></i>
-              Naik
-            </small>
-          </div>
-        </div>
-        <div class="col-md-3 mb-4 fade-in">
-          <div class="glass-card stat-card">
-            <div class="card-icon"><i class="fas fa-ticket-alt"></i></div>
-            <div class="stat-number">893</div>
-            <div class="stat-label">Tiket Terjual</div>
-            <small class="text-danger">
-              <i class="fas fa-arrow-down me-1"></i>
-              Turun
-            </small>
           </div>
         </div>
         <div class="col-md-3 mb-4 fade-in">
           <div class="glass-card stat-card">
             <div class="card-icon"><i class="fas fa-hotel"></i></div>
-            <div class="stat-number">12</div>
+            <div class="stat-number">{{ number_format($statistik['jumlahFasilitas'] ?? 0) }}</div>
             <div class="stat-label">Fasilitas Tersedia</div>
-            <small class="text-success">
-              <i class="fas fa-arrow-up me-1"></i>
-              Stabil
-            </small>
+          </div>
+        </div>
+        <div class="col-md-3 mb-4 fade-in">
+          <div class="glass-card stat-card">
+            <div class="card-icon"><i class="fas fa-ticket-alt"></i></div>
+            <div class="stat-number">{{ number_format($statistik['totalTiketTerjual'] ?? 0) }}</div>
+            <div class="stat-label">Tiket Terjual</div>
+          </div>
+        </div>
+        <div class="col-md-3 mb-4 fade-in">
+          <div class="glass-card stat-card">
+            <div class="card-icon"><i class="fas fa-images"></i></div>
+            <div class="stat-number">{{ number_format($statistik['jumlahGaleri'] ?? 0) }}</div>
+            <div class="stat-label">Total Galeri</div>
           </div>
         </div>
       </div>
