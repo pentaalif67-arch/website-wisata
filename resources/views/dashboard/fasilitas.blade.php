@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
   <title>Fasilitas Wisata Jember</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -367,165 +368,53 @@
       </div>
 
       <!-- Daftar Fasilitas -->
-      <div class="row">
-        <!-- Card 1 - Hotel Mutiara -->
-        <div class="col-md-4 mb-4 fade-in">
+      <div class="row" id="fasilitasContainer">
+        @forelse($fasilitas as $item)
+        <div class="col-md-4 mb-4 fade-in fasilitas-item" data-kategori="{{ $item['kategori'] }}" data-nama="{{ strtolower($item['nama']) }}">
           <div class="glass-card h-100">
-            <div class="fasilitas-img" style="background-image: url('');"></div>
+            <div class="fasilitas-img" style="background-image: url('{{ $item['gambar'] }}'); background-size: cover; background-position: center; height: 200px;"></div>
             <div class="card-body">
               <div class="d-flex justify-content-between align-items-start mb-2">
-                <h5 class="card-title">Hotel Mutiara Jember</h5>
-                <span class="category-badge">Penginapan</span>
+                <h5 class="card-title">{{ $item['nama'] }}</h5>
+                <span class="category-badge">{{ $item['kategori'] }}</span>
               </div>
-              <p class="card-text">Hotel bintang 4 dengan fasilitas lengkap di pusat kota Jember. Cocok untuk bisnis dan liburan keluarga.</p>
+              <p class="card-text">{{ Illuminate\Support\Str::limit($item['deskripsi'], 100) }}</p>
               <div class="d-flex justify-content-between align-items-center">
-                <button class="btn btn-outline-accent btn-sm">Lihat Detail</button>
+                <button class="btn btn-outline-accent btn-sm" onclick="openDetailModal('{{ json_encode($item) }}')">Lihat Detail</button>
                 <div class="rating">
-                  <i class="fas fa-star text-warning"></i>
-                  <i class="fas fa-star text-warning"></i>
-                  <i class="fas fa-star text-warning"></i>
-                  <i class="fas fa-star text-warning"></i>
-                  <i class="far fa-star text-warning"></i>
-                  <span class="ms-1">(4.0)</span>
+                  @for($i = 1; $i <= 5; $i++)
+                    @if($i <= floor($item['rating']))
+                      <i class="fas fa-star text-warning"></i>
+                    @elseif($i - 0.5 <= $item['rating'])
+                      <i class="fas fa-star-half-alt text-warning"></i>
+                    @else
+                      <i class="far fa-star text-warning"></i>
+                    @endif
+                  @endfor
+                  <span class="ms-1">({{ $item['rating'] }})</span>
                 </div>
               </div>
             </div>
           </div>
         </div>
-
-        <!-- Card 2 - Restoran Laut Biru -->
-        <div class="col-md-4 mb-4 fade-in">
-          <div class="glass-card h-100">
-            <div class="fasilitas-img" style="background-image: url('');"></div>
-            <div class="card-body">
-              <div class="d-flex justify-content-between align-items-start mb-2">
-                <h5 class="card-title">Restoran Laut Biru</h5>
-                <span class="category-badge">Restoran</span>
-              </div>
-              <p class="card-text">Restoran seafood segar dengan pemandangan pantai. Menyajikan hidangan laut khas Jember.</p>
-              <div class="d-flex justify-content-between align-items-center">
-                <button class="btn btn-outline-accent btn-sm">Lihat Detail</button>
-                <div class="rating">
-                  <i class="fas fa-star text-warning"></i>
-                  <i class="fas fa-star text-warning"></i>
-                  <i class="fas fa-star text-warning"></i>
-                  <i class="fas fa-star text-warning"></i>
-                  <i class="fas fa-star-half-alt text-warning"></i>
-                  <span class="ms-1">(4.5)</span>
-                </div>
-              </div>
-            </div>
+        @empty
+        <div class="col-12">
+          <div class="glass-card p-4 text-center">
+            <i class="fas fa-building fa-3x mb-3" style="color: var(--accent); opacity: 0.7;"></i>
+            <h5 class="mb-2">Belum ada fasilitas yang ditambahkan</h5>
+            <p class="mb-3 opacity-75">Mulai dengan menambahkan fasilitas penginapan/RBNB terdekat</p>
           </div>
         </div>
-
-        <!-- Card 3 - Rental Mobil Jember -->
-        <div class="col-md-4 mb-4 fade-in">
-          <div class="glass-card h-100">
-            <div class="fasilitas-img" style="background-image: url('');"></div>
-            <div class="card-body">
-              <div class="d-flex justify-content-between align-items-start mb-2">
-                <h5 class="card-title">Jember Car Rental</h5>
-                <span class="category-badge">Transportasi</span>
-              </div>
-              <p class="card-text">Layanan rental mobil dengan berbagai pilihan kendaraan dan sopir profesional untuk keliling Jember.</p>
-              <div class="d-flex justify-content-between align-items-center">
-                <button class="btn btn-outline-accent btn-sm">Lihat Detail</button>
-                <div class="rating">
-                  <i class="fas fa-star text-warning"></i>
-                  <i class="fas fa-star text-warning"></i>
-                  <i class="fas fa-star text-warning"></i>
-                  <i class="fas fa-star text-warning"></i>
-                  <i class="far fa-star text-warning"></i>
-                  <span class="ms-1">(4.2)</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Card 4 - Toko Oleh-oleh Khas Jember -->
-        <div class="col-md-4 mb-4 fade-in">
-          <div class="glass-card h-100">
-            <div class="fasilitas-img" style="background-image: url('');"></div>
-            <div class="card-body">
-              <div class="d-flex justify-content-between align-items-start mb-2">
-                <h5 class="card-title">Toko Oleh-oleh Khas Jember</h5>
-                <span class="category-badge">Oleh-oleh</span>
-              </div>
-              <p class="card-text">Menjual berbagai oleh-oleh khas Jember seperti suwar-suwir, tape, dan kerajinan tangan lokal.</p>
-              <div class="d-flex justify-content-between align-items-center">
-                <button class="btn btn-outline-accent btn-sm">Lihat Detail</button>
-                <div class="rating">
-                  <i class="fas fa-star text-warning"></i>
-                  <i class="fas fa-star text-warning"></i>
-                  <i class="fas fa-star text-warning"></i>
-                  <i class="fas fa-star text-warning"></i>
-                  <i class="fas fa-star text-warning"></i>
-                  <span class="ms-1">(4.8)</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Card 5 - Villa Papuma -->
-        <div class="col-md-4 mb-4 fade-in">
-          <div class="glass-card h-100">
-            <div class="fasilitas-img" style="background-image: url('');"></div>
-            <div class="card-body">
-              <div class="d-flex justify-content-between align-items-start mb-2">
-                <h5 class="card-title">Villa Papuma Beach</h5>
-                <span class="category-badge">Penginapan</span>
-              </div>
-              <p class="card-text">Villa eksklusif dengan pemandangan langsung ke Pantai Papuma. Fasilitas privat dan mewah.</p>
-              <div class="d-flex justify-content-between align-items-center">
-                <button class="btn btn-outline-accent btn-sm">Lihat Detail</button>
-                <div class="rating">
-                  <i class="fas fa-star text-warning"></i>
-                  <i class="fas fa-star text-warning"></i>
-                  <i class="fas fa-star text-warning"></i>
-                  <i class="fas fa-star text-warning"></i>
-                  <i class="fas fa-star-half-alt text-warning"></i>
-                  <span class="ms-1">(4.7)</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Card 6 - Warung Tahu Telur -->
-        <div class="col-md-4 mb-4 fade-in">
-          <div class="glass-card h-100">
-            <div class="fasilitas-img" style="background-image: url('');"></div>
-            <div class="card-body">
-              <div class="d-flex justify-content-between align-items-start mb-2">
-                <h5 class="card-title">Warung Tahu Telur Jember</h5>
-                <span class="category-badge">Restoran</span>
-              </div>
-              <p class="card-text">Kuliner legendaris Jember dengan tahu telur yang khas. Tempat favorit wisatawan lokal maupun mancanegara.</p>
-              <div class="d-flex justify-content-between align-items-center">
-                <button class="btn btn-outline-accent btn-sm">Lihat Detail</button>
-                <div class="rating">
-                  <i class="fas fa-star text-warning"></i>
-                  <i class="fas fa-star text-warning"></i>
-                  <i class="fas fa-star text-warning"></i>
-                  <i class="fas fa-star text-warning"></i>
-                  <i class="fas fa-star text-warning"></i>
-                  <span class="ms-1">(4.9)</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        @endforelse
       </div>
 
       <!-- Quick Actions -->
       <div class="quick-actions fade-in mt-5">
-        <a href="#" class="action-btn">
+        <a href="#" class="action-btn" data-bs-toggle="modal" data-bs-target="#tambahFasilitasModal">
           <div class="action-icon"><i class="fas fa-plus-circle"></i></div>
           Tambah Fasilitas
         </a>
-        <a href="#" class="action-btn">
+        <a href="#" class="action-btn" data-bs-toggle="modal" data-bs-target="#kelolaFasilitasModal">
           <div class="action-icon"><i class="fas fa-edit"></i></div>
           Kelola Fasilitas
         </a>
@@ -537,6 +426,430 @@
           <div class="action-icon"><i class="fas fa-cogs"></i></div>
           Pengaturan
         </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Kelola Fasilitas -->
+  <div class="modal fade" id="kelolaFasilitasModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">
+            <i class="fas fa-cogs me-2"></i>Kelola Fasilitas dari Database
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="table-responsive">
+            <table class="table table-striped table-hover">
+              <thead>
+                <tr>
+                  <th>No</th>
+                  <th>Nama</th>
+                  <th>Kategori</th>
+                  <th>Alamat</th>
+                  <th>Harga</th>
+                  <th>Rating</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="tabelFasilitas">
+                <!-- Data akan dimuat via JavaScript -->
+              </tbody>
+            </table>
+          </div>
+          <div id="noDataMessage" class="text-center text-muted py-4">
+            <i class="fas fa-inbox fa-3x mb-2 opacity-50"></i>
+            <p>Belum ada fasilitas dari database</p>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-accent" data-bs-dismiss="modal">Tutup</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Edit Fasilitas -->
+  <div class="modal fade" id="editFasilitasModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">
+            <i class="fas fa-edit me-2"></i>Edit Fasilitas
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="editFasilitasForm" method="POST" enctype="multipart/form-data">
+            <input type="hidden" name="_method" value="PUT">
+            <input type="hidden" name="_token" id="csrfToken" value="{{ csrf_token() }}">
+            <input type="hidden" id="editFasilitasId" name="id">
+            
+            <div class="mb-3">
+              <label for="editNamaFasilitas" class="form-label">
+                <i class="fas fa-building me-2"></i>Nama Fasilitas
+              </label>
+              <input type="text" class="form-control" id="editNamaFasilitas" name="nama" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="editKategori" class="form-label">
+                <i class="fas fa-tag me-2"></i>Kategori
+              </label>
+              <select class="form-select" id="editKategori" name="kategori" required>
+                <option value="">-- Pilih Kategori --</option>
+                <option value="Hotel">Hotel</option>
+                <option value="Penginapan">Penginapan</option>
+                <option value="RBNB">RBNB/Guest House</option>
+                <option value="Resmi">Wisma Resmi</option>
+                <option value="Kost">Kost/Homestay</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label for="editDeskripsi" class="form-label">
+                <i class="fas fa-align-left me-2"></i>Deskripsi
+              </label>
+              <textarea class="form-control" id="editDeskripsi" name="deskripsi" rows="3" required></textarea>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="editAlamat" class="form-label">
+                  <i class="fas fa-map-marker-alt me-2"></i>Alamat
+                </label>
+                <input type="text" class="form-control" id="editAlamat" name="alamat" required>
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label for="editTelepon" class="form-label">
+                  <i class="fas fa-phone me-2"></i>Nomor Telepon
+                </label>
+                <input type="tel" class="form-control" id="editTelepon" name="telepon" required>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="editHarga" class="form-label">
+                  <i class="fas fa-dollar-sign me-2"></i>Harga Per Malam (Rp)
+                </label>
+                <input type="number" class="form-control" id="editHarga" name="harga_permalam" required>
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label for="editKapasitas" class="form-label">
+                  <i class="fas fa-bed me-2"></i>Kapasitas (Orang)
+                </label>
+                <input type="number" class="form-control" id="editKapasitas" name="kapasitas" required>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="editJarak" class="form-label">
+                  <i class="fas fa-map-pin me-2"></i>Jarak ke Destinasi (km)
+                </label>
+                <input type="number" class="form-control" id="editJarak" name="jarak_km" step="0.1" required>
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label for="editRating" class="form-label">
+                  <i class="fas fa-star me-2"></i>Rating
+                </label>
+                <select class="form-select" id="editRating" name="rating">
+                  <option value="">-- Pilih Rating --</option>
+                  <option value="3">3 Bintang</option>
+                  <option value="4">4 Bintang</option>
+                  <option value="5">5 Bintang</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="editFoto" class="form-label">
+                <i class="fas fa-image me-2"></i>Upload Foto (Opsional)
+              </label>
+              <input type="file" class="form-control" id="editFoto" name="foto" accept="image/*">
+              <small class="text-muted">Format: JPG, PNG (Maksimal 5MB)</small>
+            </div>
+
+            <div class="mb-3">
+              <label for="editWebsite" class="form-label">
+                <i class="fas fa-globe me-2"></i>Website/Link Booking
+              </label>
+              <input type="url" class="form-control" id="editWebsite" name="website">
+            </div>
+
+            <div class="mb-3">
+              <label for="editFasilitas" class="form-label">
+                <i class="fas fa-list me-2"></i>Fasilitas (Pisahkan dengan koma)
+              </label>
+              <textarea class="form-control" id="editFasilitas" name="fasilitas" rows="2" placeholder="Contoh: WiFi, AC, Parkir, TV, Kolam Renang"></textarea>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-accent" data-bs-dismiss="modal">Batal</button>
+          <button type="button" class="btn btn-accent" onclick="submitEditFasilitas()">
+            <i class="fas fa-save me-2"></i>Simpan Perubahan
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Detail Fasilitas -->
+  <div class="modal fade" id="detailFasilitasModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="detailNama"></h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <img id="detailGambar" src="" alt="" class="detail-img" style="width: 100%; height: 300px; object-fit: cover; border-radius: 12px; margin-bottom: 1.5rem; border: 2px solid rgba(255, 255, 255, 0.2);">
+          
+          <div class="description-section">
+            <h6 class="section-label">Deskripsi</h6>
+            <p id="detailDeskripsi"></p>
+          </div>
+
+          <div class="info-grid">
+            <div class="info-card">
+              <div class="info-header">
+                <i class="fas fa-tag info-icon"></i>
+                <h6 class="info-label">Kategori</h6>
+              </div>
+              <p class="info-value" id="detailKategori"></p>
+            </div>
+
+            <div class="info-card">
+              <div class="info-header">
+                <i class="fas fa-map-marker-alt info-icon"></i>
+                <h6 class="info-label">Alamat</h6>
+              </div>
+              <p class="info-value" id="detailAlamat"></p>
+            </div>
+
+            <div class="info-card">
+              <div class="info-header">
+                <i class="fas fa-phone info-icon"></i>
+                <h6 class="info-label">Telepon</h6>
+              </div>
+              <p class="info-value" id="detailTelepon"></p>
+            </div>
+
+            <div class="info-card">
+              <div class="info-header">
+                <i class="fas fa-dollar-sign info-icon"></i>
+                <h6 class="info-label">Harga Per Malam</h6>
+              </div>
+              <p class="info-value" id="detailHarga"></p>
+            </div>
+
+            <div class="info-card">
+              <div class="info-header">
+                <i class="fas fa-bed info-icon"></i>
+                <h6 class="info-label">Kapasitas</h6>
+              </div>
+              <p class="info-value" id="detailKapasitas"></p>
+            </div>
+
+            <div class="info-card">
+              <div class="info-header">
+                <i class="fas fa-map-pin info-icon"></i>
+                <h6 class="info-label">Jarak ke Destinasi</h6>
+              </div>
+              <p class="info-value" id="detailJarak"></p>
+            </div>
+
+            <div class="info-card">
+              <div class="info-header">
+                <i class="fas fa-star info-icon"></i>
+                <h6 class="info-label">Rating</h6>
+              </div>
+              <p class="info-value" id="detailRating"></p>
+            </div>
+          </div>
+
+          <div class="description-section">
+            <h6 class="section-label">
+              <i class="fas fa-check me-2"></i>Fasilitas
+            </h6>
+            <div id="detailFasilitas" class="d-flex flex-wrap gap-2"></div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-accent" data-bs-dismiss="modal">Tutup</button>
+          <a id="detailWebsite" href="#" target="_blank" class="btn btn-accent" style="display: none;">
+            <i class="fas fa-external-link-alt me-2"></i>Kunjungi Website
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Tambah Fasilitas -->
+  <div class="modal fade" id="tambahFasilitasModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">
+            <i class="fas fa-plus-circle me-2"></i>Tambah Fasilitas Penginapan/RBNB Terdekat
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="fasilitasForm" method="POST" enctype="multipart/form-data">
+            <!-- Nama Fasilitas -->
+            <div class="mb-3">
+              <label for="namaFasilitas" class="form-label">
+                <i class="fas fa-building me-2"></i>Nama Fasilitas
+              </label>
+              <input type="text" class="form-control" id="namaFasilitas" name="nama" required placeholder="Contoh: Hotel Wisata Jember">
+              <small class="text-muted">Masukkan nama penginapan atau RBNB</small>
+            </div>
+
+            <!-- Kategori -->
+            <div class="mb-3">
+              <label for="kategori" class="form-label">
+                <i class="fas fa-tag me-2"></i>Kategori
+              </label>
+              <select class="form-select" id="kategori" name="kategori" required>
+                <option value="">-- Pilih Kategori --</option>
+                <option value="Hotel">Hotel</option>
+                <option value="Penginapan">Penginapan</option>
+                <option value="RBNB">RBNB/Guest House</option>
+                <option value="Resmi">Wisma Resmi</option>
+                <option value="Kost">Kost/Homestay</option>
+              </select>
+            </div>
+
+            <!-- Deskripsi -->
+            <div class="mb-3">
+              <label for="deskripsi" class="form-label">
+                <i class="fas fa-align-left me-2"></i>Deskripsi
+              </label>
+              <textarea class="form-control" id="deskripsi" name="deskripsi" rows="3" required placeholder="Deskripsi lengkap mengenai fasilitas penginapan..."></textarea>
+            </div>
+
+            <div class="row">
+              <!-- Alamat -->
+              <div class="col-md-6 mb-3">
+                <label for="alamat" class="form-label">
+                  <i class="fas fa-map-marker-alt me-2"></i>Alamat
+                </label>
+                <input type="text" class="form-control" id="alamat" name="alamat" required placeholder="Alamat lengkap">
+              </div>
+
+              <!-- Nomor Telepon -->
+              <div class="col-md-6 mb-3">
+                <label for="telepon" class="form-label">
+                  <i class="fas fa-phone me-2"></i>Nomor Telepon
+                </label>
+                <input type="tel" class="form-control" id="telepon" name="telepon" required placeholder="Contoh: 0823-xxxx-xxxx">
+              </div>
+            </div>
+
+            <div class="row">
+              <!-- Harga Per Malam -->
+              <div class="col-md-6 mb-3">
+                <label for="harga" class="form-label">
+                  <i class="fas fa-dollar-sign me-2"></i>Harga Per Malam (Rp)
+                </label>
+                <input type="number" class="form-control" id="harga" name="harga_permalam" required placeholder="Contoh: 250000">
+              </div>
+
+              <!-- Kapasitas -->
+              <div class="col-md-6 mb-3">
+                <label for="kapasitas" class="form-label">
+                  <i class="fas fa-bed me-2"></i>Kapasitas (Orang)
+                </label>
+                <input type="number" class="form-control" id="kapasitas" name="kapasitas" required placeholder="Jumlah orang">
+              </div>
+            </div>
+
+            <div class="row">
+              <!-- Jarak ke Destinasi -->
+              <div class="col-md-6 mb-3">
+                <label for="jarak" class="form-label">
+                  <i class="fas fa-map-pin me-2"></i>Jarak ke Destinasi (km)
+                </label>
+                <input type="number" class="form-control" id="jarak" name="jarak_km" step="0.1" required placeholder="Contoh: 5.5">
+              </div>
+
+              <!-- Rating -->
+              <div class="col-md-6 mb-3">
+                <label for="rating" class="form-label">
+                  <i class="fas fa-star me-2"></i>Rating
+                </label>
+                <select class="form-select" id="rating" name="rating">
+                  <option value="">-- Pilih Rating --</option>
+                  <option value="3">3 Bintang</option>
+                  <option value="4">4 Bintang</option>
+                  <option value="5">5 Bintang</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Fasilitas Kamar -->
+            <div class="mb-3">
+              <label class="form-label">
+                <i class="fas fa-check me-2"></i>Fasilitas Kamar
+              </label>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="ac" name="fasilitas" value="AC">
+                <label class="form-check-label" for="ac">AC</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="wifi" name="fasilitas" value="WiFi">
+                <label class="form-check-label" for="wifi">WiFi</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="tv" name="fasilitas" value="TV">
+                <label class="form-check-label" for="tv">TV</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="kamarMandi" name="fasilitas" value="Kamar Mandi Pribadi">
+                <label class="form-check-label" for="kamarMandi">Kamar Mandi Pribadi</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="parkir" name="fasilitas" value="Parkir Gratis">
+                <label class="form-check-label" for="parkir">Parkir Gratis</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="makanan" name="fasilitas" value="Sarapan">
+                <label class="form-check-label" for="makanan">Sarapan</label>
+              </div>
+            </div>
+
+            <!-- Foto -->
+            <div class="mb-3">
+              <label for="foto" class="form-label">
+                <i class="fas fa-image me-2"></i>Upload Foto
+              </label>
+              <input type="file" class="form-control" id="foto" name="foto" accept="image/*">
+              <small class="text-muted">Format: JPG, PNG (Maksimal 5MB)</small>
+            </div>
+
+            <!-- Website/Link -->
+            <div class="mb-3">
+              <label for="website" class="form-label">
+                <i class="fas fa-globe me-2"></i>Website/Link Booking
+              </label>
+              <input type="url" class="form-control" id="website" name="website" placeholder="https://...">
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-accent" data-bs-dismiss="modal">Batal</button>
+          <button type="button" class="btn btn-accent" onclick="submitFasilitasForm()">
+            <i class="fas fa-save me-2"></i>Simpan Fasilitas
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -580,6 +893,199 @@
       color: var(--accent);
     }
 
+    /* Modal Form Styles */
+    .modal-content {
+      background: rgba(20, 20, 30, 0.95);
+      backdrop-filter: blur(20px);
+      border-radius: 18px;
+      border: 1px solid rgba(42, 157, 143, 0.2);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9);
+    }
+
+    .modal-header {
+      border-bottom: 1px solid rgba(42, 157, 143, 0.15);
+      padding: 1.8rem;
+      background: linear-gradient(135deg, rgba(42, 157, 143, 0.08) 0%, rgba(38, 70, 83, 0.08) 100%);
+    }
+
+    .modal-title {
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 1.4rem;
+    }
+
+    .modal-body {
+      padding: 2rem;
+      max-height: 70vh;
+      overflow-y: auto;
+    }
+
+    .form-label {
+      color: var(--accent);
+      font-weight: 600;
+      margin-bottom: 0.6rem;
+      font-size: 0.95rem;
+    }
+
+    .form-control, .form-select {
+      background: rgba(42, 157, 143, 0.08);
+      border: 1px solid rgba(42, 157, 143, 0.2);
+      color: white;
+      border-radius: 10px;
+      padding: 0.7rem 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .form-control:focus, .form-select:focus {
+      background: rgba(42, 157, 143, 0.12);
+      border-color: var(--accent);
+      box-shadow: 0 0 0 0.2rem rgba(42, 157, 143, 0.3);
+      color: white;
+    }
+
+    .form-control::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .form-check {
+      margin-bottom: 0.6rem;
+      padding-left: 0;
+    }
+
+    .form-check-input {
+      background: rgba(42, 157, 143, 0.2);
+      border: 1px solid rgba(42, 157, 143, 0.3);
+      border-radius: 4px;
+      width: 1.1em;
+      height: 1.1em;
+      margin-right: 0.6rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .form-check-input:checked {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .form-check-label {
+      color: white;
+      cursor: pointer;
+      margin-top: 2px;
+    }
+
+    .modal-footer {
+      border-top: 1px solid rgba(42, 157, 143, 0.15);
+      padding: 1.5rem 1.8rem;
+      background: rgba(42, 157, 143, 0.05);
+    }
+
+    .btn-outline-accent {
+      color: var(--accent);
+      border-color: var(--accent);
+      transition: all 0.3s ease;
+    }
+
+    .btn-outline-accent:hover {
+      background-color: var(--accent);
+      color: var(--secondary);
+      border-color: var(--accent);
+    }
+
+    .btn-accent {
+      background-color: var(--accent);
+      color: var(--secondary);
+      border-color: var(--accent);
+      transition: all 0.3s ease;
+      font-weight: 600;
+    }
+
+    .btn-accent:hover {
+      background-color: #f4b847;
+      border-color: #f4b847;
+      color: var(--secondary);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(233, 196, 106, 0.3);
+    }
+
+    /* Detail Modal Styles */
+    .detail-img {
+      width: 100%;
+      height: 300px;
+      object-fit: cover;
+      border-radius: 12px;
+      margin-bottom: 1.5rem;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .info-card {
+      background: rgba(42, 157, 143, 0.08);
+      border-radius: 14px;
+      padding: 1.2rem;
+      border: 1px solid rgba(42, 157, 143, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    .info-card:hover {
+      background: rgba(42, 157, 143, 0.12);
+      border-color: rgba(42, 157, 143, 0.4);
+      transform: translateY(-2px);
+    }
+
+    .info-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0.8rem;
+    }
+
+    .info-icon {
+      width: 35px;
+      color: var(--accent);
+      margin-right: 12px;
+      font-size: 1.2rem;
+      text-align: center;
+    }
+
+    .info-label {
+      font-weight: 600;
+      color: var(--accent);
+      font-size: 0.95rem;
+      margin: 0;
+    }
+
+    .info-value {
+      margin: 0;
+      font-size: 0.95rem;
+      opacity: 0.95;
+      line-height: 1.5;
+    }
+
+    .description-section {
+      background: rgba(42, 157, 143, 0.08);
+      border-radius: 14px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      border: 1px solid rgba(42, 157, 143, 0.2);
+    }
+
+    .section-label {
+      color: var(--accent);
+      font-weight: 600;
+      margin-bottom: 1rem;
+      font-size: 1.1rem;
+    }
+
+    .text-muted {
+      color: rgba(255, 255, 255, 0.6) !important;
+    }
+
     @media (max-width: 768px) {
       .quick-actions {
         flex-direction: column;
@@ -592,6 +1098,197 @@
   </style>
 
   <script>
+    // Fungsi untuk load data fasilitas dari database
+    function loadFasilitasDatabase() {
+      const dbFasilitas = @json(\App\Models\Fasilitas::all());
+      const tbody = document.getElementById('tabelFasilitas');
+      const noDataMsg = document.getElementById('noDataMessage');
+      
+      if (dbFasilitas && dbFasilitas.length > 0) {
+        tbody.innerHTML = '';
+        
+        dbFasilitas.forEach((item, index) => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${index + 1}</td>
+            <td><strong>${item.nama}</strong></td>
+            <td><span class="badge bg-info">${item.kategori}</span></td>
+            <td>${item.alamat ? item.alamat.substring(0, 30) + '...' : '-'}</td>
+            <td>Rp ${new Intl.NumberFormat('id-ID').format(item.harga_permalam)}</td>
+            <td><i class="fas fa-star text-warning"></i> ${item.rating || '4'}/5</td>
+            <td>
+              <button class="btn btn-sm btn-warning" onclick="openEditModal(${item.id})">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button class="btn btn-sm btn-danger" onclick="deleteFasilitas(${item.id})">
+                <i class="fas fa-trash"></i>
+              </button>
+            </td>
+          `;
+          tbody.appendChild(row);
+        });
+        
+        noDataMsg.style.display = 'none';
+      } else {
+        noDataMsg.style.display = 'block';
+        tbody.innerHTML = '';
+      }
+    }
+
+    // Fungsi untuk membuka modal edit
+    function openEditModal(id) {
+      const dbFasilitas = @json(\App\Models\Fasilitas::all());
+      const item = dbFasilitas.find(f => f.id == id);
+      
+      if (!item) {
+        alert('Data fasilitas tidak ditemukan');
+        return;
+      }
+      
+      fillEditForm(item);
+    }
+
+    function fillEditForm(item) {
+      document.getElementById('editFasilitasId').value = item.id;
+      document.getElementById('editNamaFasilitas').value = item.nama;
+      document.getElementById('editKategori').value = item.kategori;
+      document.getElementById('editDeskripsi').value = item.deskripsi;
+      document.getElementById('editAlamat').value = item.alamat || '';
+      document.getElementById('editTelepon').value = item.telepon || '';
+      document.getElementById('editHarga').value = item.harga_permalam || '';
+      document.getElementById('editKapasitas').value = item.kapasitas || '';
+      document.getElementById('editJarak').value = item.jarak_km || '';
+      document.getElementById('editRating').value = item.rating || '';
+      document.getElementById('editWebsite').value = item.website || '';
+      document.getElementById('editFasilitas').value = item.fasilitas || '';
+      
+      const kelolaModal = bootstrap.Modal.getInstance(document.getElementById('kelolaFasilitasModal'));
+      if (kelolaModal) kelolaModal.hide();
+      
+      const editModal = new bootstrap.Modal(document.getElementById('editFasilitasModal'));
+      editModal.show();
+    }
+
+    function submitEditFasilitas() {
+      const form = document.getElementById('editFasilitasForm');
+      const id = document.getElementById('editFasilitasId').value;
+      const formData = new FormData(form);
+      
+      fetch(`/dashboard/fasilitas/update/${id}`, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest'
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          alert(data.message);
+          form.reset();
+          
+          const editModal = bootstrap.Modal.getInstance(document.getElementById('editFasilitasModal'));
+          if (editModal) editModal.hide();
+          
+          setTimeout(() => location.reload(), 500);
+        } else {
+          alert('Error: ' + (data.message || 'Tidak diketahui'));
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('Terjadi kesalahan saat update fasilitas');
+      });
+    }
+
+    function deleteFasilitas(id) {
+      if (confirm('Apakah Anda yakin ingin menghapus fasilitas ini?')) {
+        fetch(`/dashboard/fasilitas/delete/${id}`, {
+          method: 'DELETE',
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+          }
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            alert(data.message);
+            loadFasilitasDatabase();
+          } else {
+            alert('Error: ' + (data.message || 'Tidak diketahui'));
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('Terjadi kesalahan saat menghapus fasilitas');
+        });
+      }
+    }
+
+    // Tampilkan modal dan load data
+    document.addEventListener('show.bs.modal', function(e) {
+      if (e.target.id === 'kelolaFasilitasModal') {
+        loadFasilitasDatabase();
+      }
+    });
+
+    // Function untuk membuka detail fasilitas
+    function openDetailModal(itemJson) {
+      try {
+        const item = JSON.parse(itemJson);
+        
+        // Set data ke modal
+        document.getElementById('detailNama').textContent = item.nama;
+        document.getElementById('detailGambar').src = item.gambar;
+        document.getElementById('detailGambar').alt = item.nama;
+        document.getElementById('detailDeskripsi').textContent = item.deskripsi;
+        document.getElementById('detailKategori').textContent = item.kategori;
+        document.getElementById('detailAlamat').textContent = item.alamat || 'Tidak tersedia';
+        document.getElementById('detailTelepon').textContent = item.telepon || 'Tidak tersedia';
+        document.getElementById('detailHarga').textContent = item.harga_permalam ? 'Rp ' + new Intl.NumberFormat('id-ID').format(item.harga_permalam) : item.harga || 'Tidak tersedia';
+        document.getElementById('detailKapasitas').textContent = (item.kapasitas || '-') + ' orang';
+        document.getElementById('detailJarak').textContent = (item.jarak_km || '-') + ' km';
+        document.getElementById('detailRating').textContent = item.rating ? item.rating + '/5' : '4/5';
+        
+        // Set fasilitas badges
+        const fasilitasContainer = document.getElementById('detailFasilitas');
+        fasilitasContainer.innerHTML = '';
+        
+        if (item.fasilitas && Array.isArray(item.fasilitas) && item.fasilitas.length > 0) {
+          item.fasilitas.forEach(fac => {
+            if (fac && typeof fac === 'string') {
+              const badge = document.createElement('span');
+              badge.className = 'badge bg-primary';
+              badge.style.backgroundColor = 'rgba(42, 157, 143, 0.7)';
+              badge.style.fontSize = '0.85rem';
+              badge.style.padding = '0.5rem 0.8rem';
+              badge.textContent = fac.trim();
+              fasilitasContainer.appendChild(badge);
+            }
+          });
+        } else {
+          fasilitasContainer.innerHTML = '<span class="text-muted">Tidak ada fasilitas yang terdaftar</span>';
+        }
+        
+        // Set website button
+        const websiteBtn = document.getElementById('detailWebsite');
+        if (item.website) {
+          websiteBtn.href = item.website;
+          websiteBtn.style.display = 'block';
+        } else {
+          websiteBtn.style.display = 'none';
+        }
+        
+        // Buka modal
+        const modal = new bootstrap.Modal(document.getElementById('detailFasilitasModal'));
+        modal.show();
+      } catch (error) {
+        console.error('Error opening detail modal:', error);
+        alert('Terjadi kesalahan saat membuka detail fasilitas');
+      }
+    }
+
     // Highlight menu aktif
     document.addEventListener('DOMContentLoaded', function() {
       const currentPage = window.location.pathname;
@@ -639,6 +1336,85 @@
           }
         });
       });
+
+      // Function untuk submit form fasilitas
+      window.submitFasilitasForm = function() {
+        const form = document.getElementById('fasilitasForm');
+        
+        // Validasi form
+        if (!form.checkValidity()) {
+          event.preventDefault();
+          event.stopPropagation();
+          alert('Mohon lengkapi semua field yang diperlikan!');
+          form.classList.add('was-validated');
+          return;
+        }
+        
+        // Ambil nilai dari form
+        const nama = document.getElementById('namaFasilitas').value;
+        const kategori = document.getElementById('kategori').value;
+        const deskripsi = document.getElementById('deskripsi').value;
+        const alamat = document.getElementById('alamat').value;
+        const telepon = document.getElementById('telepon').value;
+        const harga = document.getElementById('harga').value;
+        const kapasitas = document.getElementById('kapasitas').value;
+        const jarak = document.getElementById('jarak').value;
+        
+        // Validasi minimal
+        if (!nama || !kategori || !deskripsi || !alamat || !telepon || !harga || !kapasitas || !jarak) {
+          alert('Mohon lengkapi semua field yang diperlukan!');
+          return;
+        }
+        
+        // Ambil fasilitas yang dipilih
+        const facilitiesCheckboxes = document.querySelectorAll('input[name="fasilitas"]:checked');
+        const facilities = Array.from(facilitiesCheckboxes).map(cb => cb.value).join(', ');
+        
+        // Buat FormData untuk upload file
+        const formData = new FormData(form);
+        
+        // Tambahkan CSRF token
+        formData.append('_token', document.querySelector('meta[name="csrf-token"]')?.content || '');
+        
+        // Ubah checkbox menjadi array
+        formData.delete('fasilitas');
+        facilitiesCheckboxes.forEach(cb => {
+          formData.append('fasilitas[]', cb.value);
+        });
+        
+        // Submit ke server
+        fetch('{{ route("fasilitas.store") }}', {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+          }
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            alert('Fasilitas berhasil ditambahkan!');
+            form.reset();
+            
+            // Tutup modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('tambahFasilitasModal'));
+            if (modal) {
+              modal.hide();
+            }
+            
+            // Reload halaman setelah 1 detik
+            setTimeout(() => {
+              location.reload();
+            }, 1000);
+          } else {
+            alert('Terjadi kesalahan: ' + (data.message || 'Tidak diketahui'));
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('Terjadi kesalahan saat menyimpan fasilitas!');
+        });
+      };
     });
   </script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

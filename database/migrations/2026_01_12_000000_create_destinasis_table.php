@@ -13,20 +13,22 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('destinasis', function (Blueprint $table) {
-            $table->id();
-            $table->string('nama_destinasi');
-            $table->string('kategori')->nullable();
-            $table->text('alamat')->nullable();
-            $table->string('telepon')->nullable();
-            $table->string('email')->nullable();
-            $table->time('jam_buka')->nullable();
-            $table->time('jam_tutup')->nullable();
-            $table->decimal('harga_tiket', 12, 2)->nullable();
-            $table->decimal('latitude', 10, 7)->nullable();
-            $table->decimal('longitude', 10, 7)->nullable();
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('destinasis')) {
+            Schema::create('destinasis', function (Blueprint $table) {
+                $table->id();
+                $table->string('nama_destinasi');
+                $table->string('kategori')->nullable();
+                $table->text('alamat')->nullable();
+                $table->string('telepon')->nullable();
+                $table->string('email')->nullable();
+                $table->time('jam_buka')->nullable();
+                $table->time('jam_tutup')->nullable();
+                $table->decimal('harga_tiket', 12, 2)->nullable();
+                $table->decimal('latitude', 10, 7)->nullable();
+                $table->decimal('longitude', 10, 7)->nullable();
+                $table->timestamps();
+            });
+        }
     }
 
     /**

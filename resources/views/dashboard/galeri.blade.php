@@ -214,6 +214,152 @@
       border: 1px solid rgba(42, 157, 143, 0.3);
     }
 
+    /* Detail Modal Styles */
+    .detail-img {
+      width: 100%;
+      height: 350px;
+      object-fit: cover;
+      border-radius: 16px;
+      margin-bottom: 2rem;
+      border: none;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .info-card {
+      background: rgba(42, 157, 143, 0.08);
+      border-radius: 14px;
+      padding: 1.2rem;
+      border: 1px solid rgba(42, 157, 143, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    .info-card:hover {
+      background: rgba(42, 157, 143, 0.12);
+      border-color: rgba(42, 157, 143, 0.4);
+      transform: translateY(-2px);
+    }
+
+    .info-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0.8rem;
+    }
+
+    .info-icon {
+      width: 35px;
+      color: var(--accent);
+      margin-right: 12px;
+      font-size: 1.2rem;
+      text-align: center;
+    }
+
+    .info-label {
+      font-weight: 600;
+      color: var(--accent);
+      font-size: 0.95rem;
+      margin: 0;
+    }
+
+    .info-value {
+      margin: 0;
+      font-size: 0.95rem;
+      opacity: 0.95;
+      line-height: 1.5;
+    }
+
+    .description-section {
+      background: rgba(42, 157, 143, 0.08);
+      border-radius: 14px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      border: 1px solid rgba(42, 157, 143, 0.2);
+    }
+
+    .section-label {
+      color: var(--accent);
+      font-weight: 600;
+      margin-bottom: 1rem;
+      font-size: 1.1rem;
+    }
+
+    /* Modal Styles */
+    .modal-content {
+      background: rgba(15, 15, 25, 0.98);
+      backdrop-filter: blur(20px);
+      border-radius: 18px;
+      border: 1px solid rgba(42, 157, 143, 0.2);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9);
+      color: white;
+    }
+
+    .modal-header {
+      border-bottom: 1px solid rgba(42, 157, 143, 0.15);
+      padding: 2rem;
+      background: linear-gradient(135deg, rgba(42, 157, 143, 0.08) 0%, rgba(38, 70, 83, 0.08) 100%);
+    }
+
+    .modal-title {
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 1.8rem;
+    }
+
+    .btn-close {
+      filter: brightness(0.8);
+      opacity: 0.7;
+    }
+
+    .btn-close:hover {
+      opacity: 1;
+      filter: brightness(1);
+    }
+
+    .modal-body {
+      padding: 2rem;
+    }
+
+    .modal-footer {
+      border-top: 1px solid rgba(42, 157, 143, 0.15);
+      padding: 1.5rem 2rem;
+      background: rgba(42, 157, 143, 0.05);
+    }
+
+    /* Button Styles */
+    .btn-outline-accent {
+      color: var(--accent);
+      border-color: var(--accent);
+      transition: all 0.3s ease;
+    }
+
+    .btn-outline-accent:hover {
+      background-color: var(--accent);
+      color: var(--secondary);
+      border-color: var(--accent);
+    }
+
+    .btn-accent {
+      background-color: var(--accent);
+      color: var(--secondary);
+      border-color: var(--accent);
+      transition: all 0.3s ease;
+      font-weight: 600;
+    }
+
+    .btn-accent:hover {
+      background-color: #f4b847;
+      border-color: #f4b847;
+      color: var(--secondary);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(233, 196, 106, 0.3);
+    }
+
     /* Footer */
     footer {
       text-align: center;
@@ -377,81 +523,75 @@
     &copy; 2025 Wisata Jember. Semua Hak Dilindungi.
   </footer>
 
-  <!-- Modal untuk gambar -->
+  <!-- Modal untuk detail galeri -->
   <div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
-      <div class="modal-content" style="background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.2);">
-        <div class="modal-header border-bottom-0">
-          <h5 class="modal-title text-white" id="modalTitle"></h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalTitle"></h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <div class="modal-body text-center">
-          <img id="modalImage" src="" class="img-fluid rounded" alt="" style="max-height: 70vh; object-fit: contain;">
-          <div class="mt-3 text-white">
+        <div class="modal-body">
+          <img id="modalImage" src="" class="detail-img" alt="" style="width: 100%; height: 300px; object-fit: cover; border-radius: 12px; margin-bottom: 1.5rem; border: 2px solid rgba(255, 255, 255, 0.2);">
+          
+          <div class="description-section">
+            <h6 class="section-label">Deskripsi</h6>
             <p id="modalDescription"></p>
-            <div class="d-flex justify-content-center gap-3">
-              <span class="category-badge" id="modalCategory"></span>
-              <span class="date-badge" id="modalDate"></span>
+          </div>
+
+          <div class="info-grid">
+            <div class="info-card">
+              <div class="info-header">
+                <i class="fas fa-map-marker-alt info-icon"></i>
+                <h6 class="info-label">Lokasi</h6>
+              </div>
+              <p class="info-value" id="modalLokasi">Tidak tersedia</p>
+            </div>
+
+            <div class="info-card">
+              <div class="info-header">
+                <i class="fas fa-clock info-icon"></i>
+                <h6 class="info-label">Jam Operasional</h6>
+              </div>
+              <p class="info-value" id="modalJam">Tidak tersedia</p>
+            </div>
+
+            <div class="info-card">
+              <div class="info-header">
+                <i class="fas fa-ticket-alt info-icon"></i>
+                <h6 class="info-label">Harga Tiket</h6>
+              </div>
+              <p class="info-value" id="modalHarga">Tidak tersedia</p>
+            </div>
+
+            <div class="info-card">
+              <div class="info-header">
+                <i class="fas fa-folder info-icon"></i>
+                <h6 class="info-label">Kategori</h6>
+              </div>
+              <p class="info-value" id="modalCategory"></p>
+            </div>
+
+            <div class="info-card">
+              <div class="info-header">
+                <i class="fas fa-calendar info-icon"></i>
+                <h6 class="info-label">Tanggal Ditambahkan</h6>
+              </div>
+              <p class="info-value" id="modalDate"></p>
             </div>
           </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-accent" data-bs-dismiss="modal">Tutup</button>
+          <button type="button" class="btn btn-accent pesan-tiket-btn">Pesan Tiket</button>
         </div>
       </div>
     </div>
   </div>
 
   <script>
-    // Data galeri
-    const galeriData = [
-      {
-        'id': 1,
-        'judul': 'Sunset di Pantai Papuma',
-        'gambar': 'https://wisatakita.com/pariwisata/532/800-Pantai-Papuma.jpeg',
-        'kategori': 'Pantai',
-        'deskripsi': 'Pemandangan sunset yang menakjubkan di Pantai Papuma',
-        'tanggal': '15 November 2024'
-      },
-      {
-        'id': 2,
-        'judul': 'Puncak Rembangan',
-        'gambar': 'https://turisian.com/wp-content/uploads/2023/02/Wisata-Puncak-Rembangan-Jember.jpg',
-        'kategori': 'Pegunungan',
-        'deskripsi': 'Pemandangan kota Jember dari ketinggian',
-        'tanggal': '10 November 2024'
-      },
-      {
-        'id': 3,
-        'judul': 'Air Terjun Tancak',
-        'gambar': 'https://turisian.com/wp-content/uploads/2023/01/Air-Terjun-Tancak-Jember.jpg',
-        'kategori': 'Air Terjun',
-        'deskripsi': 'Air terjun tertinggi di Jawa Timur',
-        'tanggal': '5 November 2024'
-      },
-      {
-        'id': 4,
-        'judul': 'Teluk Love',
-        'gambar': 'https://asset.kompas.com/crops/hHvbTRkW_5N7F3lcya3JQIHvuRA=/0x0:780x520/750x500/data/photo/2019/02/08/3228997686.jpg',
-        'kategori': 'Pantai',
-        'deskripsi': 'Teluk berbentuk hati yang romantis',
-        'tanggal': '1 November 2024'
-      },
-      {
-        'id': 5,
-        'judul': 'Kebun Teh Gunung Gambir',
-        'gambar': 'https://www.topwisata.info/wp-content/uploads/2019/03/kebun2Bteh2Bgunung2Bgambir.jpg',
-        'kategori': 'Perkebunan',
-        'deskripsi': 'Hamparan kebun teh yang hijau',
-        'tanggal': '28 Oktober 2024'
-      },
-      {
-        'id': 6,
-        'judul': 'Pantai Watu Ulo',
-        'gambar': 'https://img.inews.co.id/media/600/files/networks/2022/11/22/388ae_pantai-watu-ulo.jpeg',
-        'kategori': 'Pantai',
-        'deskripsi': 'Pantai dengan batu besar berbentuk ular',
-        'tanggal': '25 Oktober 2024'
-      },
-      
-    ];
+    // Data galeri dari server (Laravel Blade)
+    const galeriData = @json($galeri ?? []);
 
     // Fungsi untuk menampilkan galeri
     function renderGaleri(data = galeriData) {
@@ -463,18 +603,24 @@
         col.className = 'col-md-4 mb-4 fade-in';
         col.setAttribute('data-kategori', item.kategori);
         
+        // Handle image path - if it's from storage, prepend /storage/
+        let imagePath = item.gambar || item.image || '';
+        if (imagePath && !imagePath.startsWith('http') && !imagePath.startsWith('/storage/')) {
+          imagePath = '/storage/' + imagePath;
+        }
+        
         col.innerHTML = `
           <div class="glass-card h-100">
-            <div class="galeri-img" style="background-image: url('${item.gambar}');"></div>
+            <div class="galeri-img" style="background-image: url('${imagePath}');"></div>
             <div class="card-body">
               <div class="d-flex justify-content-between align-items-start mb-2">
-                <h5 class="card-title">${item.judul}</h5>
-                <span class="category-badge">${item.kategori}</span>
+                <h5 class="card-title">${item.nama || item.judul}</h5>
+                <span class="category-badge">${item.kategori || 'Umum'}</span>
               </div>
-              <p class="card-text">${item.deskripsi}</p>
+              <p class="card-text">${item.deskripsi || item.description || 'Destinasi wisata'}</p>
               <div class="d-flex justify-content-between align-items-center">
                 <span class="date-badge">
-                  <i class="fas fa-calendar me-1"></i>${item.tanggal}
+                  <i class="fas fa-calendar me-1"></i>${item.created_at ? new Date(item.created_at).toLocaleDateString('id-ID') : item.tanggal || 'Terbaru'}
                 </span>
                 <button class="btn btn-outline-accent btn-sm" onclick="openModal(${item.id})">
                   <i class="fas fa-expand me-1"></i>Lihat Detail
@@ -492,12 +638,43 @@
     function openModal(id) {
       const item = galeriData.find(img => img.id === id);
       if (item) {
-        document.getElementById('modalTitle').textContent = item.judul;
-        document.getElementById('modalImage').src = item.gambar;
-        document.getElementById('modalImage').alt = item.judul;
-        document.getElementById('modalDescription').textContent = item.deskripsi;
-        document.getElementById('modalCategory').textContent = item.kategori;
-        document.getElementById('modalDate').innerHTML = `<i class="fas fa-calendar me-1"></i>${item.tanggal}`;
+        // Handle image path
+        let imagePath = item.gambar || item.image || '';
+        if (imagePath && !imagePath.startsWith('http') && !imagePath.startsWith('/storage/')) {
+          imagePath = '/storage/' + imagePath;
+        }
+        
+        document.getElementById('modalTitle').textContent = item.nama || item.judul;
+        document.getElementById('modalImage').src = imagePath;
+        document.getElementById('modalImage').alt = item.nama || item.judul;
+        document.getElementById('modalDescription').textContent = item.deskripsi || item.description || 'Destinasi wisata';
+        document.getElementById('modalCategory').textContent = item.kategori || 'Umum';
+        
+        // Info Lokasi
+        if (item.lokasi) {
+          document.getElementById('modalLokasi').textContent = item.lokasi;
+        } else {
+          document.getElementById('modalLokasi').textContent = 'Tidak tersedia';
+        }
+        
+        // Info Jam Operasional
+        if (item.jam_buka && item.jam_tutup) {
+          document.getElementById('modalJam').textContent = item.jam_buka + ' - ' + item.jam_tutup;
+        } else {
+          document.getElementById('modalJam').textContent = 'Tidak tersedia';
+        }
+        
+        // Info Harga Tiket
+        if (item.harga_tiket) {
+          const harga = new Intl.NumberFormat('id-ID', {style: 'currency', currency: 'IDR'}).format(item.harga_tiket);
+          document.getElementById('modalHarga').textContent = harga;
+        } else {
+          document.getElementById('modalHarga').textContent = 'Tidak tersedia';
+        }
+        
+        // Tanggal
+        const dateStr = item.created_at ? new Date(item.created_at).toLocaleDateString('id-ID') : (item.tanggal || 'Terbaru');
+        document.getElementById('modalDate').textContent = dateStr;
         
         const modal = new bootstrap.Modal(document.getElementById('imageModal'));
         modal.show();
