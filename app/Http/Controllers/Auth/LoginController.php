@@ -24,7 +24,15 @@ class LoginController extends Controller
      * Where to redirect users after login.
      *
      * @var string
+     * 
      */
+    protected function authenticated($request, $user)
+{
+    return $user->role === 'admin'
+        ? redirect()->route('admin.dashboard')
+        : redirect()->route('pelanggan.dashboard');
+}
+
     protected $redirectTo = '/home';
 
     /**
