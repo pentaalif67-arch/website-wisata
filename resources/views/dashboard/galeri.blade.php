@@ -730,13 +730,21 @@
   </div>
 
   <script>
-    // Data galeri dari server (Laravel Blade) - Inject di awal script
-    const galeriData = window.galeriData || [];
+    // Inject galeri data dari Blade - HARUS di awal sebelum digunakan
+    window.galeriData = @json($galeri ?? []);
+  </script>
+
+  <script>
 
     // Fungsi untuk menampilkan galeri
-    function renderGaleri(data = galeriData) {
+    function renderGaleri(data = window.galeriData) {
       const galeriGrid = document.getElementById('galeriGrid');
       galeriGrid.innerHTML = '';
+
+      if (!data || data.length === 0) {
+        galeriGrid.innerHTML = '<div class="col-12 text-center"><p>Tidak ada data galeri</p></div>';
+        return;
+      }
 
       data.forEach(item => {
         const col = document.createElement('div');
@@ -755,12 +763,25 @@
         let actionButtons = '';
         if (isAdmin) {
           actionButtons = `
-            <div class="d-flex gap-2 mt-2">
-              <button class="btn btn-sm btn-warning text-dark flex-grow-1" onclick="editGaleri(${item.id})">
-                <i class="fas fa-edit me-1"></i>Edit
+            <div class="d-flex justify-content-between align-items-center mt-3">
+              <div>
+                <button class="btn btn-outline-accent btn-sm" onclick="openModal(${item.id})">
+                  <i class="fas fa-eye me-1"></i>Detail
+                </button>
+                <button class="btn btn-outline-primary btn-sm ms-2" onclick="editGaleri(${item.id})">
+                  <i class="fas fa-edit me-1"></i>Edit
+                </button>
+              </div>
+              <button class="btn btn-outline-danger btn-sm" onclick="confirmDeleteGaleri(${item.id}, '${(item.nama || item.judul).replace(/'/g, "\\'")}')">
+                <i class="fas fa-trash"></i>
               </button>
-              <button class="btn btn-sm btn-danger flex-grow-1" onclick="deleteGaleri(${item.id})">
-                <i class="fas fa-trash me-1"></i>Hapus
+            </div>
+          `;
+        } else {
+          actionButtons = `
+            <div class="d-flex justify-content-center mt-3">
+              <button class="btn btn-outline-accent btn-sm" onclick="openModal(${item.id})">
+                <i class="fas fa-eye me-1"></i>Detail
               </button>
             </div>
           `;
@@ -775,13 +796,10 @@
                 <span class="category-badge">${item.kategori || 'Umum'}</span>
               </div>
               <p class="card-text">${item.deskripsi || item.description || 'Destinasi wisata'}</p>
-              <div class="d-flex justify-content-between align-items-center">
+              <div class="d-flex justify-content-between align-items-center mb-2">
                 <span class="date-badge">
                   <i class="fas fa-calendar me-1"></i>${item.created_at ? new Date(item.created_at).toLocaleDateString('id-ID') : item.tanggal || 'Terbaru'}
                 </span>
-                <button class="btn btn-outline-accent btn-sm" onclick="openModal(${item.id})">
-                  <i class="fas fa-expand me-1"></i>Lihat
-                </button>
               </div>
               ${actionButtons}
             </div>
@@ -860,9 +878,9 @@
       
       searchInput.addEventListener('input', function() {
         const searchTerm = this.value.toLowerCase();
-        const filteredData = galeriData.filter(item => 
-          item.judul.toLowerCase().includes(searchTerm) || 
-          item.deskripsi.toLowerCase().includes(searchTerm)
+        const filteredData = window.galeriData.filter(item => 
+          (item.nama || item.judul || '').toLowerCase().includes(searchTerm) || 
+          (item.deskripsi || '').toLowerCase().includes(searchTerm)
         );
         renderGaleri(filteredData);
       });
@@ -872,8 +890,8 @@
       filterSelect.addEventListener('change', function() {
         const selectedCategory = this.value;
         const filteredData = selectedCategory === 'Semua' 
-          ? galeriData 
-          : galeriData.filter(item => item.kategori === selectedCategory);
+          ? window.galeriData 
+          : window.galeriData.filter(item => item.kategori === selectedCategory);
         renderGaleri(filteredData);
       });
 
@@ -964,36 +982,39 @@
         });
       };
 
+      // Fungsi untuk confirm delete galeri
+      window.confirmDeleteGaleri = function(id, judul) {
+        if (confirm(`Apakah Anda yakin ingin menghapus galeri "${judul}"?`)) {
+          window.deleteGaleri(id);
+        }
+      };
+
       // Fungsi untuk delete galeri
       window.deleteGaleri = function(id) {
-        if (confirm('Yakin ingin menghapus galeri ini?')) {
-          fetch(`/dashboard/galeri/delete/${id}`, {
-            method: 'POST',
-            headers: {
-              'X-Requested-With': 'XMLHttpRequest',
-              'X-HTTP-Method-Override': 'DELETE',
-              'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || document.querySelector('input[name="_token"]')?.value || '',
-            }
-          })
-          .then(response => response.json())
-          .then(data => {
-            if (data.success) {
-              alert('Galeri berhasil dihapus!');
-              location.reload();
-            } else {
-              alert('Error: ' + (data.message || 'Tidak diketahui'));
-            }
-          })
-          .catch(error => {
-            console.error('Error:', error);
-            alert('Terjadi kesalahan saat menghapus galeri');
+        fetch(`/dashboard/galeri/delete/${id}`, {
+          method: 'POST',
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-HTTP-Method-Override': 'DELETE',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || document.querySelector('input[name="_token"]')?.value || '',
+          }
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            alert('Galeri berhasil dihapus!');
+            location.reload();
+          } else {
+            alert('Error: ' + (data.message || 'Tidak diketahui'));
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('Terjadi kesalahan saat menghapus galeri');
           });
         }
       };
     });
-  <script>
-    // Inject galeri data dari Blade
-    window.galeriData = @json($galeri ?? []);
   </script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
