@@ -17,9 +17,19 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        // Skip jika user sudah ada
+        if (User::where('email', 'test@example.com')->doesntExist()) {
+            User::factory()->create([
+                'name' => 'Test User',
+                'email' => 'test@example.com',
+            ]);
+        }
+
+        // Jalankan seeders
+        $this->call([
+            DestinasiSeeder::class,
+            FasilitasSeeder::class,
+            GaleriSeeder::class,
         ]);
     }
 }

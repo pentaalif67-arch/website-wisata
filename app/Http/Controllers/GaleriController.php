@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Galeri;
+use Illuminate\Support\Facades\Storage;
 
 class GaleriController extends Controller
 {
@@ -11,86 +13,97 @@ class GaleriController extends Controller
      */
     public function index()
     {
-        // Data galeri
-        $galeri = [
-            [
-                'id' => 1,
-                'judul' => 'Sunset di Pantai Papuma',
-                'gambar' => 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=900&q=80',
-                'kategori' => 'Pantai',
-                'deskripsi' => 'Pemandangan sunset yang menakjubkan di Pantai Papuma',
-                'tanggal' => '15 November 2024'
-            ],
-            [
-                'id' => 2,
-                'judul' => 'Puncak Rembangan',
-                'gambar' => 'https://images.unsplash.com/photo-1519817650390-64a93db511aa?auto=format&fit=crop&w=900&q=80',
-                'kategori' => 'Pegunungan',
-                'deskripsi' => 'Pemandangan kota Jember dari ketinggian',
-                'tanggal' => '10 November 2024'
-            ],
-            [
-                'id' => 3,
-                'judul' => 'Air Terjun Tancak',
-                'gambar' => 'https://images.unsplash.com/photo-1533055640609-24b498dfd1b1?auto=format&fit=crop&w=900&q=80',
-                'kategori' => 'Air Terjun',
-                'deskripsi' => 'Air terjun tertinggi di Jawa Timur',
-                'tanggal' => '5 November 2024'
-            ],
-            [
-                'id' => 4,
-                'judul' => 'Teluk Love',
-                'gambar' => 'https://images.unsplash.com/photo-1483683804023-6ccdb62f86ef?auto=format&fit=crop&w=900&q=80',
-                'kategori' => 'Pantai',
-                'deskripsi' => 'Teluk berbentuk hati yang romantis',
-                'tanggal' => '1 November 2024'
-            ],
-            [
-                'id' => 5,
-                'judul' => 'Kebun Teh Gunung Gambir',
-                'gambar' => 'https://images.unsplash.com/photo-1571863533956-01c88e79957e?auto=format&fit=crop&w=900&q=80',
-                'kategori' => 'Perkebunan',
-                'deskripsi' => 'Hamparan kebun teh yang hijau',
-                'tanggal' => '28 Oktober 2024'
-            ],
-            [
-                'id' => 6,
-                'judul' => 'Pantai Watu Ulo',
-                'gambar' => 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=900&q=80',
-                'kategori' => 'Pantai',
-                'deskripsi' => 'Pantai dengan batu besar berbentuk ular',
-                'tanggal' => '25 Oktober 2024'
-            ],
-            [
-                'id' => 7,
-                'judul' => 'Taman Botani Sukorambi',
-                'gambar' => 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=900&q=80',
-                'kategori' => 'Wisata Keluarga',
-                'deskripsi' => 'Taman rekreasi keluarga yang asri',
-                'tanggal' => '20 Oktober 2024'
-            ],
-            [
-                'id' => 8,
-                'judul' => 'Curug Pelangi',
-                'gambar' => 'https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?auto=format&fit=crop&w=900&q=80',
-                'kategori' => 'Air Terjun',
-                'deskripsi' => 'Air terjun dengan pelangi yang indah',
-                'tanggal' => '15 Oktober 2024'
-            ],
-            [
-                'id' => 9,
-                'judul' => 'Pemandangan Malam Jember',
-                'gambar' => 'https://images.unsplash.com/photo-1519817650390-64a93db511aa?auto=format&fit=crop&w=900&q=80',
-                'kategori' => 'Kota',
-                'deskripsi' => 'Pemandangan kota Jember di malam hari',
-                'tanggal' => '10 Oktober 2024'
-            ]
-        ];
+        // Ambil data galeri dari database
+        $galeri = Galeri::all();
 
         // Data kategori untuk filter
-        $kategori = ['Semua', 'Pantai', 'Pegunungan', 'Air Terjun', 'Perkebunan', 'Wisata Keluarga', 'Kota'];
+        $kategori = ['Semua', 'Pantai', 'Pegunungan', 'Air Terjun', 'Perkebunan', 'Wisata Keluarga', 'Kota', 'Rekreasi', 'Pantai'];
 
         return view('dashboard.galeri', compact('galeri', 'kategori'));
+    }
+
+    /**
+     * Menyimpan galeri baru
+     */
+    public function store(Request $request)
+    {
+        $request->validate([
+            'judul' => 'required|string|max:255',
+            'kategori' => 'required|string',
+            'deskripsi' => 'required|string',
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        $data = $request->only(['judul', 'kategori', 'deskripsi']);
+
+        // Handle file upload atau URL
+        if ($request->hasFile('foto')) {
+            $file = $request->file('foto');
+            $filename = 'galeri_' . time() . '.' . $file->getClientOriginalExtension();
+            $path = $file->storeAs('galeri', $filename, 'public');
+            $data['gambar'] = '/storage/' . $path;
+        } elseif ($request->input('gambar_url')) {
+            $data['gambar'] = $request->input('gambar_url');
+        }
+
+        Galeri::create($data);
+
+        return response()->json(['success' => true, 'message' => 'Galeri berhasil ditambahkan']);
+    }
+
+    /**
+     * Mengupdate galeri
+     */
+    public function update(Request $request, $id)
+    {
+        $galeri = Galeri::findOrFail($id);
+
+        $request->validate([
+            'judul' => 'required|string|max:255',
+            'kategori' => 'required|string',
+            'deskripsi' => 'required|string',
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        $data = $request->only(['judul', 'kategori', 'deskripsi']);
+
+        // Handle file upload atau URL
+        if ($request->hasFile('foto')) {
+            // Hapus file lama jika ada
+            if ($galeri->gambar && str_starts_with($galeri->gambar, '/storage/')) {
+                $oldPath = str_replace('/storage/', '', $galeri->gambar);
+                Storage::disk('public')->delete($oldPath);
+            }
+
+            $file = $request->file('foto');
+            $filename = 'galeri_' . time() . '.' . $file->getClientOriginalExtension();
+            $path = $file->storeAs('galeri', $filename, 'public');
+            $data['gambar'] = '/storage/' . $path;
+        } elseif ($request->input('gambar_url')) {
+            $data['gambar'] = $request->input('gambar_url');
+        }
+
+        $galeri->update($data);
+
+        return response()->json(['success' => true, 'message' => 'Galeri berhasil diupdate']);
+    }
+
+    /**
+     * Menghapus galeri
+     */
+    public function destroy($id)
+    {
+        $galeri = Galeri::findOrFail($id);
+
+        // Hapus file jika ada
+        if ($galeri->gambar && str_starts_with($galeri->gambar, '/storage/')) {
+            $oldPath = str_replace('/storage/', '', $galeri->gambar);
+            Storage::disk('public')->delete($oldPath);
+        }
+
+        $galeri->delete();
+
+        return response()->json(['success' => true, 'message' => 'Galeri berhasil dihapus']);
     }
 
     /**
