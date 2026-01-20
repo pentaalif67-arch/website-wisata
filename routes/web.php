@@ -80,4 +80,20 @@ Route::get('/wisata', function () {
     return redirect()->route('destinasi.index');
 })->name('wisata.index');
 
+// TEST ROUTE
+Route::get('/test-galeri', function () {
+    $galeri = \App\Models\Galeri::all();
+    return response()->json([
+        'count' => $galeri->count(),
+        'first_item' => $galeri->first()?->getAttributes(),
+        'all_count' => count($galeri),
+    ]);
+});
+
+Route::get('/test-galeri-view', function () {
+    $galeri = \App\Models\Galeri::all();
+    $kategori = ['Semua', 'Pantai'];
+    return view('dashboard.galeri', compact('galeri', 'kategori'));
+});
+
 require __DIR__.'/auth.php';

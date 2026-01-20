@@ -494,9 +494,176 @@
 
       <!-- Galeri Grid -->
       <div class="row" id="galeriGrid">
-        <!-- Data galeri akan dimasukkan di sini oleh JavaScript -->
-      </div>
+        @forelse($galeri as $item)
+          <div class="col-md-4 mb-4 fade-in">
+            <div class="glass-card h-100">
+              @php
+                $imagePath = $item->gambar ?? '';
+                if (!str_starts_with($imagePath, 'http') && !str_starts_with($imagePath, '/storage/')) {
+                  $imagePath = '/storage/' . $imagePath;
+                }
+              @endphp
+              <div class="galeri-img" style="background-image: url('{{ $imagePath }}');"></div>
+              <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                  <h5 class="card-title">{{ $item->nama ?? $item->judul }}</h5>
+                  <span class="category-badge">{{ $item->kategori ?? 'Umum' }}</span>
+                </div>
+                <p class="card-text">{{ Illuminate\Support\Str::limit($item->deskripsi ?? '', 100) }}</p>
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <span class="date-badge">
+                    <i class="fas fa-calendar me-1"></i>{{ $item->created_at?->format('d/m/Y') ?? 'Terbaru' }}
+                  </span>
+                </div>
+                
+                <!-- Admin Buttons -->
+                @auth
+                  @if(Auth::user()->isAdmin())
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                      <div>
+                        <button class="btn btn-outline-accent btn-sm" data-bs-toggle="modal" data-bs-target="#detailModal-{{ $item->id }}">
+                          <i class="fas fa-eye me-1"></i>Detail
+                        </button>
+                        <button class="btn btn-outline-primary btn-sm ms-2" data-bs-toggle="modal" data-bs-target="#editGaleriModal-{{ $item->id }}">
+                          <i class="fas fa-edit me-1"></i>Edit
+                        </button>
+                      </div>
+                      <form action="" method="POST" class="d-inline delete-galeri-form-{{ $item->id }}" style="display: inline;">
+                        @csrf
+                        @method('DELETE')
+                        <button type="button" 
+                                class="btn btn-outline-danger btn-sm delete-galeri-btn" 
+                                onclick="confirmDeleteGaleri({{ $item->id }}, '{{ addslashes($item->judul) }}')">
+                          <i class="fas fa-trash"></i>
+                        </button>
+                      </form>
+                    </div>
+                  @else
+                    <div class="d-flex justify-content-center mt-3">
+                      <button class="btn btn-outline-accent btn-sm" data-bs-toggle="modal" data-bs-target="#detailModal-{{ $item->id }}">
+                        <i class="fas fa-eye me-1"></i>Detail
+                      </button>
+                    </div>
+                  @endif
+                @endauth
+              </div>
+            </div>
+          </div>
 
+          <!-- Detail Modal -->
+          <div class="modal fade" id="detailModal-{{ $item->id }}" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">{{ $item->nama ?? $item->judul }}</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <img src="{{ $imagePath }}" class="detail-img" alt="{{ $item->nama ?? $item->judul }}" style="width: 100%; height: 300px; object-fit: cover; border-radius: 12px; margin-bottom: 1.5rem; border: 2px solid rgba(255, 255, 255, 0.2);">
+                  
+                  <div class="description-section">
+                    <h6 class="section-label">Deskripsi</h6>
+                    <p>{{ $item->deskripsi ?? 'Tidak ada deskripsi' }}</p>
+                  </div>
+
+                  <div class="info-grid">
+                    <div class="info-card">
+                      <div class="info-header">
+                        <i class="fas fa-folder info-icon"></i>
+                        <h6 class="info-label">Kategori</h6>
+                      </div>
+                      <p class="info-value">{{ $item->kategori ?? 'Tidak tersedia' }}</p>
+                    </div>
+
+                    <div class="info-card">
+                      <div class="info-header">
+                        <i class="fas fa-calendar info-icon"></i>
+                        <h6 class="info-label">Tanggal</h6>
+                      </div>
+                      <p class="info-value">{{ $item->created_at?->format('d/m/Y H:i') ?? 'Tidak tersedia' }}</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-outline-accent" data-bs-dismiss="modal">Tutup</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Edit Modal -->
+          <div class="modal fade" id="editGaleriModal-{{ $item->id }}" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">
+                    <i class="fas fa-edit me-2"></i>Edit Galeri
+                  </h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <form id="editGaleriForm-{{ $item->id }}" method="POST" enctype="multipart/form-data" action="/dashboard/galeri/update/{{ $item->id }}">
+                    @csrf
+                    @method('PUT')
+                    
+                    <div class="mb-3">
+                      <label for="editJudul-{{ $item->id }}" class="form-label">
+                        <i class="fas fa-heading me-2"></i>Judul
+                      </label>
+                      <input type="text" class="form-control" id="editJudul-{{ $item->id }}" name="judul" value="{{ $item->judul }}" required>
+                    </div>
+
+                    <div class="mb-3">
+                      <label for="editKategori-{{ $item->id }}" class="form-label">
+                        <i class="fas fa-tag me-2"></i>Kategori
+                      </label>
+                      <select class="form-select" id="editKategori-{{ $item->id }}" name="kategori" required>
+                        <option value="">-- Pilih Kategori --</option>
+                        <option value="Pantai" {{ $item->kategori === 'Pantai' ? 'selected' : '' }}>Pantai</option>
+                        <option value="Pegunungan" {{ $item->kategori === 'Pegunungan' ? 'selected' : '' }}>Pegunungan</option>
+                        <option value="Air Terjun" {{ $item->kategori === 'Air Terjun' ? 'selected' : '' }}>Air Terjun</option>
+                        <option value="Perkebunan" {{ $item->kategori === 'Perkebunan' ? 'selected' : '' }}>Perkebunan</option>
+                        <option value="Wisata Keluarga" {{ $item->kategori === 'Wisata Keluarga' ? 'selected' : '' }}>Wisata Keluarga</option>
+                        <option value="Kota" {{ $item->kategori === 'Kota' ? 'selected' : '' }}>Kota</option>
+                        <option value="Rekreasi" {{ $item->kategori === 'Rekreasi' ? 'selected' : '' }}>Rekreasi</option>
+                      </select>
+                    </div>
+
+                    <div class="mb-3">
+                      <label for="editDeskripsi-{{ $item->id }}" class="form-label">
+                        <i class="fas fa-align-left me-2"></i>Deskripsi
+                      </label>
+                      <textarea class="form-control" id="editDeskripsi-{{ $item->id }}" name="deskripsi" rows="3">{{ $item->deskripsi }}</textarea>
+                    </div>
+
+                    <div class="mb-3">
+                      <label for="editFoto-{{ $item->id }}" class="form-label">
+                        <i class="fas fa-image me-2"></i>Upload Foto Baru (Opsional)
+                      </label>
+                      <input type="file" class="form-control" id="editFoto-{{ $item->id }}" name="foto" accept="image/*">
+                      <small class="text-muted">Format: JPG, PNG (Maksimal 5MB)</small>
+                      <div class="mt-2">
+                        <img src="{{ $imagePath }}" style="max-width: 200px; border-radius: 8px;">
+                      </div>
+                    </div>
+                  </form>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-outline-accent" data-bs-dismiss="modal">Batal</button>
+                  <button type="button" class="btn btn-accent" onclick="submitEditGaleri({{ $item->id }})">
+                    <i class="fas fa-save me-2"></i>Update
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        @empty
+          <div class="col-12 text-center">
+            <p class="text-white">Tidak ada data galeri</p>
+          </div>
+        @endforelse
+      </div>
+      
       <!-- Quick Actions - Hanya untuk Admin -->
       @auth
         @if(Auth::user()->isAdmin())
@@ -732,6 +899,8 @@
   <script>
     // Inject galeri data dari Blade - HARUS di awal sebelum digunakan
     window.galeriData = @json($galeri ?? []);
+    console.log('window.galeriData injected:', window.galeriData, 'Count:', window.galeriData?.length || 0);
+    document.getElementById('jsonPreview').textContent = 'Array length: ' + (window.galeriData?.length || 0);
   </script>
 
   <script>
@@ -740,6 +909,12 @@
     function renderGaleri(data = window.galeriData) {
       const galeriGrid = document.getElementById('galeriGrid');
       galeriGrid.innerHTML = '';
+
+      // Debug
+      const debugCount = document.getElementById('debugCount');
+      const debugData = document.getElementById('debugData');
+      if (debugCount) debugCount.textContent = data?.length || 0;
+      if (debugData) debugData.textContent = JSON.stringify(data?.slice(0, 1) || []);
 
       if (!data || data.length === 0) {
         galeriGrid.innerHTML = '<div class="col-12 text-center"><p>Tidak ada data galeri</p></div>';
@@ -930,7 +1105,7 @@
 
       // Fungsi untuk edit galeri
       window.editGaleri = function(id) {
-        const item = galeriData.find(img => img.id === id);
+        const item = window.galeriData.find(img => img.id === id);
         if (item) {
           // Set form data
           document.getElementById('editGaleriId').value = id;
@@ -952,65 +1127,23 @@
       };
 
       // Fungsi untuk submit edit galeri
-      window.submitEditGaleri = function() {
-        const id = document.getElementById('editGaleriId').value;
-        const form = document.getElementById('editGaleriForm');
-        const formData = new FormData(form);
-
-        fetch(`/dashboard/galeri/update/${id}`, {
-          method: 'POST',
-          body: formData,
-          headers: {
-            'X-Requested-With': 'XMLHttpRequest',
-            'X-HTTP-Method-Override': 'PUT',
-          }
-        })
-        .then(response => response.json())
-        .then(data => {
-          if (data.success) {
-            alert('Galeri berhasil diupdate!');
-            const modal = bootstrap.Modal.getInstance(document.getElementById('editGaleriModal'));
-            modal.hide();
-            location.reload();
-          } else {
-            alert('Error: ' + (data.message || 'Tidak diketahui'));
-          }
-        })
-        .catch(error => {
-          console.error('Error:', error);
-          alert('Terjadi kesalahan saat mengupdate galeri');
-        });
+      window.submitEditGaleri = function(id) {
+        const form = document.getElementById('editGaleriForm-' + id);
+        if (form) {
+          form.submit();
+        }
       };
 
       // Fungsi untuk confirm delete galeri
       window.confirmDeleteGaleri = function(id, judul) {
         if (confirm(`Apakah Anda yakin ingin menghapus galeri "${judul}"?`)) {
-          window.deleteGaleri(id);
+          const form = document.querySelector('.delete-galeri-form-' + id);
+          if (form) {
+            form.action = '/dashboard/galeri/delete/' + id;
+            form.submit();
+          }
         }
       };
-
-      // Fungsi untuk delete galeri
-      window.deleteGaleri = function(id) {
-        fetch(`/dashboard/galeri/delete/${id}`, {
-          method: 'POST',
-          headers: {
-            'X-Requested-With': 'XMLHttpRequest',
-            'X-HTTP-Method-Override': 'DELETE',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || document.querySelector('input[name="_token"]')?.value || '',
-          }
-        })
-        .then(response => response.json())
-        .then(data => {
-          if (data.success) {
-            alert('Galeri berhasil dihapus!');
-            location.reload();
-          } else {
-            alert('Error: ' + (data.message || 'Tidak diketahui'));
-          }
-        })
-        .catch(error => {
-          console.error('Error:', error);
-          alert('Terjadi kesalahan saat menghapus galeri');
           });
         }
       };
