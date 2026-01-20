@@ -506,14 +506,7 @@
           <div class="action-icon"><i class="fas fa-cloud-upload-alt"></i></div>
           Upload Galeri
         </a>
-        <a href="#" class="action-btn">
-          <div class="action-icon"><i class="fas fa-sliders-h"></i></div>
-          Kelola Album
-        </a>
-        <a href="#" class="action-btn">
-          <div class="action-icon"><i class="fas fa-cogs"></i></div>
-          Pengaturan
-        </a>
+        
       </div>
     </div>
   </div>
