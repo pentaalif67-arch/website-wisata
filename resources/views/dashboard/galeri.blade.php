@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
   <title>Galeri Wisata Jember</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -459,7 +460,7 @@
 
 
   <!-- Main Content -->
-  <div class="main-content">
+  <div class="main-content" @auth @if(Auth::user()->isAdmin()) data-is-admin="true" @endif @endauth>
     <div class="container">
       <div class="dashboard-header fade-in text-center">
         <h1 class="welcome-text">Galeri Wisata Jember 📸</h1>
@@ -495,6 +496,18 @@
       <div class="row" id="galeriGrid">
         <!-- Data galeri akan dimasukkan di sini oleh JavaScript -->
       </div>
+
+      <!-- Quick Actions - Hanya untuk Admin -->
+      @auth
+        @if(Auth::user()->isAdmin())
+          <div class="quick-actions fade-in mt-5">
+            <a href="#" class="action-btn" data-bs-toggle="modal" data-bs-target="#tambahGaleriModal">
+              <div class="action-icon"><i class="fas fa-plus-circle"></i></div>
+              Tambah Galeri
+            </a>
+          </div>
+        @endif
+      @endauth
 
       <!-- Quick Actions -->
       <div class="quick-actions fade-in mt-5">
@@ -582,9 +595,136 @@
     </div>
   </div>
 
+  <!-- Modal Tambah Galeri -->
+  <div class="modal fade" id="tambahGaleriModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">
+            <i class="fas fa-plus-circle me-2"></i>Tambah Galeri
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="tambahGaleriForm" method="POST" enctype="multipart/form-data">
+            @csrf
+            <div class="mb-3">
+              <label for="judulGaleri" class="form-label">
+                <i class="fas fa-heading me-2"></i>Judul
+              </label>
+              <input type="text" class="form-control" id="judulGaleri" name="judul" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="kategoriGaleri" class="form-label">
+                <i class="fas fa-tag me-2"></i>Kategori
+              </label>
+              <select class="form-select" id="kategoriGaleri" name="kategori" required>
+                <option value="">-- Pilih Kategori --</option>
+                <option value="Pantai">Pantai</option>
+                <option value="Pegunungan">Pegunungan</option>
+                <option value="Air Terjun">Air Terjun</option>
+                <option value="Perkebunan">Perkebunan</option>
+                <option value="Wisata Keluarga">Wisata Keluarga</option>
+                <option value="Kota">Kota</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label for="deskripsiGaleri" class="form-label">
+                <i class="fas fa-align-left me-2"></i>Deskripsi
+              </label>
+              <textarea class="form-control" id="deskripsiGaleri" name="deskripsi" rows="3"></textarea>
+            </div>
+
+            <div class="mb-3">
+              <label for="fotoGaleri" class="form-label">
+                <i class="fas fa-image me-2"></i>Upload Foto
+              </label>
+              <input type="file" class="form-control" id="fotoGaleri" name="foto" accept="image/*" required>
+              <small class="text-muted">Format: JPG, PNG (Maksimal 5MB)</small>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-accent" data-bs-dismiss="modal">Batal</button>
+          <button type="button" class="btn btn-accent" onclick="submitTambahGaleri()">
+            <i class="fas fa-save me-2"></i>Simpan
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Edit Galeri -->
+  <div class="modal fade" id="editGaleriModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">
+            <i class="fas fa-edit me-2"></i>Edit Galeri
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="editGaleriForm" method="POST" enctype="multipart/form-data">
+            @csrf
+            <input type="hidden" id="editGaleriId" name="id">
+            
+            <div class="mb-3">
+              <label for="editJudulGaleri" class="form-label">
+                <i class="fas fa-heading me-2"></i>Judul
+              </label>
+              <input type="text" class="form-control" id="editJudulGaleri" name="judul" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="editKategoriGaleri" class="form-label">
+                <i class="fas fa-tag me-2"></i>Kategori
+              </label>
+              <select class="form-select" id="editKategoriGaleri" name="kategori" required>
+                <option value="">-- Pilih Kategori --</option>
+                <option value="Pantai">Pantai</option>
+                <option value="Pegunungan">Pegunungan</option>
+                <option value="Air Terjun">Air Terjun</option>
+                <option value="Perkebunan">Perkebunan</option>
+                <option value="Wisata Keluarga">Wisata Keluarga</option>
+                <option value="Kota">Kota</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label for="editDeskripsiGaleri" class="form-label">
+                <i class="fas fa-align-left me-2"></i>Deskripsi
+              </label>
+              <textarea class="form-control" id="editDeskripsiGaleri" name="deskripsi" rows="3"></textarea>
+            </div>
+
+            <div class="mb-3">
+              <label for="editFotoGaleri" class="form-label">
+                <i class="fas fa-image me-2"></i>Upload Foto Baru (Opsional)
+              </label>
+              <input type="file" class="form-control" id="editFotoGaleri" name="foto" accept="image/*">
+              <small class="text-muted">Format: JPG, PNG (Maksimal 5MB)</small>
+              <div class="mt-2">
+                <img id="editFotoPreview" style="max-width: 200px; display: none; border-radius: 8px;">
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-accent" data-bs-dismiss="modal">Batal</button>
+          <button type="button" class="btn btn-accent" onclick="submitEditGaleri()">
+            <i class="fas fa-save me-2"></i>Update
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
-    // Data galeri dari server (Laravel Blade)
-    const galeriData = @json($galeri ?? []);
+    // Data galeri dari server (Laravel Blade) - Inject di awal script
+    const galeriData = window.galeriData || [];
 
     // Fungsi untuk menampilkan galeri
     function renderGaleri(data = galeriData) {
@@ -602,6 +742,23 @@
           imagePath = '/storage/' + imagePath;
         }
         
+        // Cek apakah user adalah admin
+        const isAdmin = document.querySelector('[data-is-admin]')?.dataset.isAdmin === 'true';
+        
+        let actionButtons = '';
+        if (isAdmin) {
+          actionButtons = `
+            <div class="d-flex gap-2 mt-2">
+              <button class="btn btn-sm btn-warning text-dark flex-grow-1" onclick="editGaleri(${item.id})">
+                <i class="fas fa-edit me-1"></i>Edit
+              </button>
+              <button class="btn btn-sm btn-danger flex-grow-1" onclick="deleteGaleri(${item.id})">
+                <i class="fas fa-trash me-1"></i>Hapus
+              </button>
+            </div>
+          `;
+        }
+        
         col.innerHTML = `
           <div class="glass-card h-100">
             <div class="galeri-img" style="background-image: url('${imagePath}');"></div>
@@ -616,9 +773,10 @@
                   <i class="fas fa-calendar me-1"></i>${item.created_at ? new Date(item.created_at).toLocaleDateString('id-ID') : item.tanggal || 'Terbaru'}
                 </span>
                 <button class="btn btn-outline-accent btn-sm" onclick="openModal(${item.id})">
-                  <i class="fas fa-expand me-1"></i>Lihat Detail
+                  <i class="fas fa-expand me-1"></i>Lihat
                 </button>
               </div>
+              ${actionButtons}
             </div>
           </div>
         `;
@@ -711,7 +869,124 @@
           : galeriData.filter(item => item.kategori === selectedCategory);
         renderGaleri(filteredData);
       });
+
+      // Fungsi untuk submit form tambah galeri
+      window.submitTambahGaleri = function() {
+        const form = document.getElementById('tambahGaleriForm');
+        const formData = new FormData(form);
+
+        fetch('/dashboard/galeri/store', {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+          }
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            alert('Galeri berhasil ditambahkan!');
+            // Reset form
+            form.reset();
+            // Tutup modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('tambahGaleriModal'));
+            modal.hide();
+            // Refresh halaman
+            location.reload();
+          } else {
+            alert('Error: ' + (data.message || 'Tidak diketahui'));
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('Terjadi kesalahan saat menambahkan galeri');
+        });
+      };
+
+      // Fungsi untuk edit galeri
+      window.editGaleri = function(id) {
+        const item = galeriData.find(img => img.id === id);
+        if (item) {
+          // Set form data
+          document.getElementById('editGaleriId').value = id;
+          document.getElementById('editJudulGaleri').value = item.nama || item.judul;
+          document.getElementById('editKategoriGaleri').value = item.kategori;
+          document.getElementById('editDeskripsiGaleri').value = item.deskripsi || item.description || '';
+          
+          // Tampilkan preview foto
+          const imagePath = item.gambar || item.image || '';
+          const imagePathFull = imagePath.startsWith('http') || imagePath.startsWith('/storage/') 
+            ? imagePath 
+            : '/storage/' + imagePath;
+          document.getElementById('editFotoPreview').src = imagePathFull;
+          document.getElementById('editFotoPreview').style.display = 'block';
+          
+          const modal = new bootstrap.Modal(document.getElementById('editGaleriModal'));
+          modal.show();
+        }
+      };
+
+      // Fungsi untuk submit edit galeri
+      window.submitEditGaleri = function() {
+        const id = document.getElementById('editGaleriId').value;
+        const form = document.getElementById('editGaleriForm');
+        const formData = new FormData(form);
+
+        fetch(`/dashboard/galeri/update/${id}`, {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-HTTP-Method-Override': 'PUT',
+          }
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            alert('Galeri berhasil diupdate!');
+            const modal = bootstrap.Modal.getInstance(document.getElementById('editGaleriModal'));
+            modal.hide();
+            location.reload();
+          } else {
+            alert('Error: ' + (data.message || 'Tidak diketahui'));
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('Terjadi kesalahan saat mengupdate galeri');
+        });
+      };
+
+      // Fungsi untuk delete galeri
+      window.deleteGaleri = function(id) {
+        if (confirm('Yakin ingin menghapus galeri ini?')) {
+          fetch(`/dashboard/galeri/delete/${id}`, {
+            method: 'POST',
+            headers: {
+              'X-Requested-With': 'XMLHttpRequest',
+              'X-HTTP-Method-Override': 'DELETE',
+              'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || document.querySelector('input[name="_token"]')?.value || '',
+            }
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              alert('Galeri berhasil dihapus!');
+              location.reload();
+            } else {
+              alert('Error: ' + (data.message || 'Tidak diketahui'));
+            }
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            alert('Terjadi kesalahan saat menghapus galeri');
+          });
+        }
+      };
     });
+  <script>
+    // Inject galeri data dari Blade
+    window.galeriData = @json($galeri ?? []);
   </script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

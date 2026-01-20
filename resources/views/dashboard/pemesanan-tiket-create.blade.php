@@ -294,7 +294,9 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
     // Calculate total price
-    const hargaTiket = {{ $destinasi->harga_tiket }};
+    const hargaTiket = "{{ $destinasi->harga_tiket }}";
+    // Jika ingin memastikan tipe number:
+    // const hargaTiket = Number("{{ $destinasi->harga_tiket }}");
     const jumlahTiketInput = document.getElementById('jumlah_tiket');
     const totalHargaDisplay = document.getElementById('total_harga');
 

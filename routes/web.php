@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DestinasiController;
 use App\Http\Controllers\FasilitasController;
+use App\Http\Controllers\GaleriController;
 use App\Http\Controllers\TentangKamiController;
 use App\Http\Controllers\KontakController;
 use App\Http\Controllers\PemesananTiketController;
@@ -39,80 +40,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('/dashboard/fasilitas/delete/{id}', [FasilitasController::class, 'destroy'])->name('fasilitas.destroy');
     });
 
-    // Galeri Routes
-    Route::get('/dashboard/galeri', function () {
-        // Data galeri hardcoded (default)
-        $defaultGaleri = [
-            [
-                'id' => 1,
-                'judul' => 'Sunset di Pantai Papuma',
-                'gambar' => 'https://wisatakita.com/pariwisata/532/800-Pantai-Papuma.jpeg',
-                'kategori' => 'Pantai',
-                'deskripsi' => 'Pemandangan sunset yang menakjubkan di Pantai Papuma',
-                'created_at' => '2024-11-15'
-            ],
-            [
-                'id' => 2,
-                'judul' => 'Puncak Rembangan',
-                'gambar' => 'https://turisian.com/wp-content/uploads/2023/02/Wisata-Puncak-Rembangan-Jember.jpg',
-                'kategori' => 'Pegunungan',
-                'deskripsi' => 'Pemandangan kota Jember dari ketinggian',
-                'created_at' => '2024-11-10'
-            ],
-            [
-                'id' => 3,
-                'judul' => 'Air Terjun Tancak',
-                'gambar' => 'https://turisian.com/wp-content/uploads/2023/01/Air-Terjun-Tancak-Jember.jpg',
-                'kategori' => 'Air Terjun',
-                'deskripsi' => 'Air terjun tertinggi di Jawa Timur',
-                'created_at' => '2024-11-05'
-            ],
-            [
-                'id' => 4,
-                'judul' => 'Teluk Love',
-                'gambar' => 'https://asset.kompas.com/crops/hHvbTRkW_5N7F3lcya3JQIHvuRA=/0x0:780x520/750x500/data/photo/2019/02/08/3228997686.jpg',
-                'kategori' => 'Pantai',
-                'deskripsi' => 'Teluk berbentuk hati yang romantis',
-                'created_at' => '2024-11-01'
-            ],
-            [
-                'id' => 5,
-                'judul' => 'Kebun Teh Gunung Gambir',
-                'gambar' => 'https://www.topwisata.info/wp-content/uploads/2019/03/kebun2Bteh2Bgunung2Bgambir.jpg',
-                'kategori' => 'Perkebunan',
-                'deskripsi' => 'Hamparan kebun teh yang hijau',
-                'created_at' => '2024-10-28'
-            ],
-            [
-                'id' => 6,
-                'judul' => 'Pantai Watu Ulo',
-                'gambar' => 'https://img.inews.co.id/media/600/files/networks/2022/11/22/388ae_pantai-watu-ulo.jpeg',
-                'kategori' => 'Pantai',
-                'deskripsi' => 'Pantai dengan batu besar berbentuk ular',
-                'created_at' => '2024-10-25'
-            ],
-        ];
-
-        // Data galeri dari database (destinasi baru)
-        $dbGaleri = \Illuminate\Support\Facades\DB::table('destinasis')
-            ->select('id', 'nama as judul', 'gambar', 'kategori', 'deskripsi', 'created_at')
-            ->get()
-            ->map(function ($item) {
-                return [
-                    'id' => $item->id + 1000, // Tambah offset agar ID unik
-                    'judul' => $item->judul,
-                    'gambar' => $item->gambar,
-                    'kategori' => $item->kategori,
-                    'deskripsi' => $item->deskripsi,
-                    'created_at' => $item->created_at
-                ];
-            })->toArray();
-
-        // Gabungkan data default dan database
-        $galeri = array_merge($defaultGaleri, $dbGaleri);
-        
-        return view('dashboard.galeri', compact('galeri'));
-    })->name('galeri.index');
+    // Galeri Routes - Semua user bisa melihat
+    Route::get('/dashboard/galeri', [GaleriController::class, 'index'])->name('galeri.index');
+    
+    // Galeri CRUD Routes - Hanya Admin
+    Route::middleware(['admin'])->group(function () {
+        Route::post('/dashboard/galeri/store', [GaleriController::class, 'store'])->name('galeri.store');
+        Route::put('/dashboard/galeri/update/{id}', [GaleriController::class, 'update'])->name('galeri.update');
+        Route::delete('/dashboard/galeri/delete/{id}', [GaleriController::class, 'destroy'])->name('galeri.destroy');
+    });
 
     // Tentang Kami Routes
     Route::get('/dashboard/tentangKami', [TentangKamiController::class, 'index'])->name('tentangKami.index');

@@ -538,14 +538,25 @@
                data-description="{{ strtolower($destinasi->deskripsi) }}">
             <div class="glass-card h-100">
               @if($destinasi->gambar)
-                <img src="{{ asset('storage/' . $destinasi->gambar) }}" 
-                     alt="{{ $destinasi->nama }}" 
-                     class="destinasi-img" 
-                     style="width: 100%; height: 200px; object-fit: cover; border-radius: 16px 16px 0 0;"
-                     onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                <div class="destinasi-img" style="width: 100%; height: 200px; background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); display: none; align-items: center; justify-content: center; border-radius: 16px 16px 0 0;">
-                  <i class="fas fa-image" style="font-size: 3rem; color: rgba(255,255,255,0.5);"></i>
-                </div>
+                @if(filter_var($destinasi->gambar, FILTER_VALIDATE_URL))
+                  <img src="{{ $destinasi->gambar }}"
+                       alt="{{ $destinasi->nama }}"
+                       class="destinasi-img"
+                       style="width: 100%; height: 200px; object-fit: cover; border-radius: 16px 16px 0 0;"
+                       onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                  <div class="destinasi-img" style="width: 100%; height: 200px; background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); display: none; align-items: center; justify-content: center; border-radius: 16px 16px 0 0;">
+                    <i class="fas fa-image" style="font-size: 3rem; color: rgba(255,255,255,0.5);"></i>
+                  </div>
+                @else
+                  <img src="{{ asset('storage/' . $destinasi->gambar) }}"
+                       alt="{{ $destinasi->nama }}"
+                       class="destinasi-img"
+                       style="width: 100%; height: 200px; object-fit: cover; border-radius: 16px 16px 0 0;"
+                       onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                  <div class="destinasi-img" style="width: 100%; height: 200px; background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); display: none; align-items: center; justify-content: center; border-radius: 16px 16px 0 0;">
+                    <i class="fas fa-image" style="font-size: 3rem; color: rgba(255,255,255,0.5);"></i>
+                  </div>
+                @endif
               @else
                 <div class="destinasi-img" style="width: 100%; height: 200px; background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); display: flex; align-items: center; justify-content: center; border-radius: 16px 16px 0 0;">
                   <i class="fas fa-image" style="font-size: 3rem; color: rgba(255,255,255,0.5);"></i>
